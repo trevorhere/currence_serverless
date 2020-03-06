@@ -1,0 +1,43 @@
+service:
+  name: serverlessts
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: hello
+  signup:
+    handler: handler.signin
+    events:
+      - http:
+          path: signup
+          cors: true
+          integration: lambda
+          method: post
+          authorizer:
+            arn: "arn:aws:cognito-idp:us-east-1:454900433813:userpool/us-east-1_q6Ry6izzy"
+            # claims:
+            #   - email
