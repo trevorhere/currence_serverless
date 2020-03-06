@@ -7,12 +7,10 @@ export const hello: APIGatewayProxyHandler = async (event, _context) => {
   const password = 'password';
   let authenticated = true;
 
-  console.log('alias: ', event['body']['alias']);
-  console.log('password: ', event['body']['password']);
+  const data = JSON.parse(event.body);
 
-
-   if(event["alias"] != username) authenticated = false;
-   if(event["password"] != password) authenticated = false;
+   if(data["alias"] != username) authenticated = false;
+   if(data["password"] != password) authenticated = false;
 
    const body = authenticated ? 
      {

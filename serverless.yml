@@ -29,6 +29,8 @@ functions:
           method: post
           cors: true # <-- CORS!
           path: hello
+          request:
+            passThrough: WHEN_NO_TEMPLATES
   signup:
     handler: handler.signin
     events:
