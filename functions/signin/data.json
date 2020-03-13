@@ -1,0 +1,11 @@
+{
+"method": "POST",
+"mode": "cors",
+"headers": {
+    "Content-Type": "application/json"
+}, 
+"body":{
+    "alias": "trevor", 
+    "password": "password"
+    }
+}
