@@ -16,24 +16,9 @@ export const signin: APIGatewayProxyHandler = async (event, _context) => {
     console.log('INPUT Alias:  ', alias);
     console.log('INPUT Password:  ', password);
 
-
-
-    try {
-      if(!password || !alias){ 
-        throw new Error("bad input data")
-      }
-    } catch(error){
-      console.log('SIGNIN::ERROR: ', error.message);
-      return {
-        statusCode: 400,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
-        },
-        body: JSON.stringify({message: "ERROR::SIGNIN invalid request parameters!"}, null, 2),
-      };
+    if(!password || !alias){ 
+      throw new Error("[400] Bad input data")
     }
-
   
     const signinService = new SigninService();
     const authenticatedPromise =  signinService.signin(alias, password);
@@ -50,7 +35,9 @@ export const signin: APIGatewayProxyHandler = async (event, _context) => {
         })
       } : {
         message: 'Unable to authenticate user.',
-        authenticated
+        authenticated,
+        alias,
+        token: null
       }
     
     return {
@@ -66,12 +53,15 @@ export const signin: APIGatewayProxyHandler = async (event, _context) => {
   } catch(error){
     console.log('SIGNIN::ERROR: ', error.message);
     return {
-      statusCode: 500,
+      statusCode:(error.message.includes("400"))? 400 : 500,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({message: "ERROR::SIGNIN Serve could not process request!"}, null, 2),
+      body: JSON.stringify({
+          message: error.message,
+          input: event
+        }),
     };
   }
 }

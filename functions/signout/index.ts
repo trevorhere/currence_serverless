@@ -9,11 +9,11 @@ export const signout: APIGatewayProxyHandler = async (event, _context) => {
   
     const data = JSON.parse(event.body);
   
-     if(data["alias"] != username) authenticated = false;
-     if(data["password"] != password) authenticated = false;
-  
-     const body = authenticated ? 
-       {
+    if(data["alias"] != username) authenticated = false;
+    if(data["password"] != password) authenticated = false;
+
+    const body = authenticated ? 
+      {
         message: 'User successfully authenticated.',
         authenticated
       } : {
