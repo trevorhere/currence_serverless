@@ -1,12 +1,9 @@
-
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
-const { getUser } = require('./SigninDAO');
+const { getUser } = require('../data/User');
 
-
-class SigninService {
-    constructor(){}
-
+class AuthService {
+    
     signin = async(alias: string, password: string): Promise<boolean> => {
         const userPromise = getUser(alias);
         const user = await userPromise;
@@ -40,10 +37,6 @@ class SigninService {
         const comparison = await comparisonPromise;
         return comparison; // true if match, false if no match
     }
-    
-  // fetch user
-  // compare password to hash
-  // return success/error
 }
 
-module.exports = SigninService
+module.exports = AuthService

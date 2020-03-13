@@ -24,23 +24,23 @@ provider:
 
 functions:
   signin:
-    handler: ./functions/signin/index.signin
+    handler: ./functions/auth/index.signin
     description: Submit alias and password, return auth token
     events:
       - http:
           method: post
           cors: true # <-- CORS!
-          path: signup
+          path: signin
           request:
             passThrough: WHEN_NO_TEMPLATES
-  signout:
-    handler: ./functions/signout/index.signout
-    description: Log user out of client
+  getFeed:
+    handler: ./functions/feed/index.getFeed
+    description: Gets feed of user
     events:
       - http:
           method: post
           cors: true # <-- CORS!
-          path: signout
+          path: getFeed
           request:
             passThrough: WHEN_NO_TEMPLATES
   # signup:
