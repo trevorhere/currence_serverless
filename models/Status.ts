@@ -2,6 +2,7 @@ const moment = require('moment');
 
 export class Status {
     id: string;
+    alias: string;
     message: string;
     user_id: string;
     user_alias: string;

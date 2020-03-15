@@ -13,6 +13,7 @@ custom:
 # Add the serverless-webpack plugin
 plugins:
   - serverless-webpack
+  - serverless-offline
 
 provider:
   name: aws
@@ -33,6 +34,16 @@ functions:
           path: signin
           request:
             passThrough: WHEN_NO_TEMPLATES
+  getUser:
+    handler: ./functions/util/user.getUser
+    description: Gets user
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: getUser
+          request:
+            passThrough: WHEN_NO_TEMPLATES
   getFeed:
     handler: ./functions/feed/index.getFeed
     description: Gets feed of user
@@ -43,15 +54,58 @@ functions:
           path: getFeed
           request:
             passThrough: WHEN_NO_TEMPLATES
-  # signup:
-  #   handler: handler.signin
-  #   events:
-  #     - http:
-  #         path: signup
-  #         cors: true
-  #         integration: lambda
-  #         method: post
-  #         authorizer:
-  #           arn: "arn:aws:cognito-idp:us-east-1:454900433813:userpool/us-east-1_q6Ry6izzy"
-  #           # claims:
-  #           #   - email
+  getStory:
+    handler: ./functions/story/index.getStory
+    description: Gets story of user
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: getStory
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  getFollowers:
+    handler: ./functions/followers/index.getFollowers
+    description: Gets story of user
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: getFollowers
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  getFollowing:
+    handler: ./functions/following/index.getFollowing
+    description: Gets story of user
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: getFollowing
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  follow:
+    handler: ./functions/follow/index.follow
+    description: Follow a user.
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: follow
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  unfollow:
+    handler: ./functions/unfollow/index.unfollow
+    description: Unfollow a user. 
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: follow
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+
+
+
+  #signup
+  # createStatus

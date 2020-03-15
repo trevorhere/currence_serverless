@@ -19,9 +19,9 @@ export const seedDB = () => {
 
     DB_Users.push(UserA, UserB, UserC);
 
-    const  StatusA1 = new Status("aliasA","aliasA","this is status A1");
-    const  StatusA2 = new Status("aliasA","aliasA","this is status A2");
-    const  StatusA3 = new Status("aliasA","aliasA","this is status A3");
+    const  StatusA1 = new Status("trevor", "trevor","this is status A1");
+    const  StatusA2 = new Status("trevor", "trevor","this is status A2");
+    const  StatusA3 = new Status("trevor", "trevor","this is status A3");
 
     const  StatusB1 = new Status("aliasB","aliasB","this is status B1");
     const  StatusB2 = new Status("aliasB","aliasB","this is status B2");
@@ -57,24 +57,24 @@ export const seedDB = () => {
     )
 
     // add followers for every user
-    UserA.addFollower(UserB);
-    UserA.addFollower(UserC);
+    UserA.addFollower(UserB.alias);
+    UserA.addFollower(UserC.alias);
 
-    UserB.addFollower(UserA);
-    UserB.addFollower(UserC);
+    UserB.addFollower(UserA.alias);
+    UserB.addFollower(UserC.alias);
 
-    UserC.addFollower(UserA);
-    UserC.addFollower(UserB);
+    UserC.addFollower(UserA.alias);
+    UserC.addFollower(UserB.alias);
 
     // add followees for every user
-    UserA.addFollowing(UserB);
-    UserA.addFollowing(UserC);
+    UserA.addFollowing(UserB.alias);
+    UserA.addFollowing(UserC.alias);
 
-    UserB.addFollowing(UserA);
-    UserB.addFollowing(UserC);
+    UserB.addFollowing(UserA.alias);
+    UserB.addFollowing(UserC.alias);
 
-    UserC.addFollowing(UserA);
-    UserC.addFollowing(UserB);
+    UserC.addFollowing(UserA.alias);
+    UserC.addFollowing(UserB.alias);
 
     // add statuses for every user
     UserA.addStatus(StatusA1);

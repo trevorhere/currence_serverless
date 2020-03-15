@@ -8,16 +8,18 @@ const jwt = require('jsonwebtoken');
 export const signin: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    const data = event.body; 
+    const data = JSON.parse(event.body); 
     const alias = data["alias"];
     const password = data["password"];
 
     console.log('INPUT DATA:  ', data);
+    console.log('ALIAS:  ', alias);
+    console.log('PASSWORD:  ', password);
 
-    if(!password || !alias)
+    if(!password || !alias){
         throw new Error("[400] Bad input data")
-    
-    
+    }
+
     const auth = new AuthService();
     const authenticatedPromise =  auth.signin(alias, password);
     const authenticated = await authenticatedPromise;

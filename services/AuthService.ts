@@ -3,11 +3,11 @@ const saltRounds = 10;
 const { getUser } = require('../data/User');
 
 class AuthService {
-    
     signin = async(alias: string, password: string): Promise<boolean> => {
+
         const userPromise = getUser(alias);
         const user = await userPromise;
-        const authenticated = await this.compareHash(password, user["hash"]);
+        const authenticated = await this.compareHash(password, user["password"]);
         return authenticated;
     }
 

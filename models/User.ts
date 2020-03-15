@@ -1,13 +1,14 @@
 
 import { Status } from './Status';
+import {getUser } from '../db'
 
 export class User {
     id: string;
     email:string;
     alias:string;
     password: string;
-    followers: User[];
-    following: User[];
+    followers: string[];
+    following: string[];
     statuses: Status[];
     feed: Status[];
     picture: string;
@@ -45,38 +46,38 @@ export class User {
     getPassword(): string{
         return this.password;
     };
-    addFollower(user: User): void{
-        this.followers.push(user);
+    addFollower(alias: string): void{
+        this.followers.push(alias);
     }
-    removeFollower(user: User): void {
-        this.setFollowers(this.followers.filter(follower => follower.id !==  user.id))
+    removeFollower(alias: string): void {
+        this.setFollowers(this.followers.filter(a => a !==  alias))
     }
-    getFollower(userID: string): User | undefined{
-        return this.followers.find(follower =>  follower.id === userID)
+    getFollower(alias: string): string | undefined{
+        return this.followers.find(a =>  a === alias)
     }
-    getFollowers(): User[]{
+    getFollowers(): string[]{
         return this.followers;
     }
-    setFollowers(followers: User[]): void {
-        this.followers = [...followers];
+    setFollowers(aliases: string[]): void {
+        this.followers = [...aliases];
     }
-    addFollowing(user: User): void{
-        this.following.push(user);
+    addFollowing(alias: string): void{
+        this.following.push(alias);
     }
-    removeFollowing(user: User): void {
-        this.setFollowing(this.following.filter(followee => followee.id !==  user.id))
-        this.setFeed(this.feed.filter(status => status.user_id !== user.id));
+    removeFollowing(alias: string): void {
+        this.setFollowing(this.following.filter(a => a !==  alias))
+        this.setFeed(this.feed.filter(status => status.alias !== alias));
     }
-    getFollowee(userID: string): User | undefined {
-        return this.following.find(followee =>  followee.id === userID)
+    getFollowee(alias: string): string | undefined {
+        return this.following.find(a =>  a === alias)
     }
     setFeed(statuses: Status[]):void {
         this.feed = [...statuses]
     }
-    setFollowing(followees: User[]): void {
-    this.following = [...followees];
+    setFollowing(aliases: string[]): void {
+    this.following = [...aliases];
     }
-    getFollowing(): User[]{
+    getFollowing(): string[]{
         return this.following;
     }
     getFeed(): Status[]{
@@ -85,8 +86,7 @@ export class User {
     addStatus(status: Status): void {
         this.statuses.push(status);
         this.followers.map(follower => {
-        //    console.log('follower: ',follower.getAlias(), status.getMessage())
-            follower.feed.push(status);
+            let user = getUser(follower).feed.push(status);
         })
      //  console.log(this.email,'added status: ', status.id, status.message);
     }

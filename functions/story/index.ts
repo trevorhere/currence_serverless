@@ -2,11 +2,8 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import UserService from '../../services/UserService';
 
-const middy = require('middy');
-const { auth } = require('../util/auth');
 
-
-const getFeed: APIGatewayProxyHandler = async (event, _context) => {
+const getStory: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
     const data = JSON.parse(event.body);
@@ -20,9 +17,9 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
     const user = await getUserPromise;
-    const feed = await user.getFeed();
+    const story = await user.getStatuses();
 
-    // console.log('feed: ', feed);
+    // console.log('story: ', story);
     // console.log('user: ', user);
 
 
@@ -34,7 +31,7 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
         },
         body: JSON.stringify({
           user,
-          feed
+          story
           }),
     };
 
@@ -56,4 +53,6 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
 }
 
 
-exports.getFeed = middy(getFeed).use(auth());
+export {
+    getStory
+}

@@ -2,11 +2,9 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import UserService from '../../services/UserService';
 
-const middy = require('middy');
-const { auth } = require('../util/auth');
 
 
-const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
+const getUser: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
     const data = JSON.parse(event.body);
@@ -20,25 +18,8 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
     const user = await getUserPromise;
-    const followersAliases = await user.getFollowers();
 
-
-    const userLookup = async (alias:string) => {
-        return await userService.getUser(alias);
-    }
-
-    const buildFollowers = async () => {
-        return Promise.all( followersAliases.map( a => userLookup(a)));
-    }
-
-    let followers = await buildFollowers().then(f => {
-        console.log('followers: ', f);
-        return [...f];
-    })
-
-    console.log('followers: ', followers);
     // console.log('user: ', user);
-
 
     return {
         statusCode: 200,
@@ -47,8 +28,7 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-            user,
-            followers
+            user
         }),
     };
 
@@ -58,10 +38,10 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
         return {
             statusCode:(error.message.includes("400"))? 400 : 500,
             headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': true,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
         },
-            body: JSON.stringify({
+        body: JSON.stringify({
             message: error.message,
             input: event
             }),
@@ -70,4 +50,6 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
 }
 
 
-exports.getFollowers = middy(getFollowers).use(auth());
+export {
+    getUser
+}

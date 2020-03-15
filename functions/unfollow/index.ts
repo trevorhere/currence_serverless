@@ -6,25 +6,28 @@ const middy = require('middy');
 const { auth } = require('../util/auth');
 
 
-const getFeed: APIGatewayProxyHandler = async (event, _context) => {
+const unfollow: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
     const data = JSON.parse(event.body);
     console.log('INPUT DATA:  ', data);
     const alias = data["alias"];
+    const followeeAlias = data["followeeAlias"];
 
-    if(!alias){ 
+
+    if(!alias || !followeeAlias){ 
         throw new Error("[400] Bad input data")
     }
 
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
+    const getFolloweePromise = userService.getUser(followeeAlias);
+
     const user = await getUserPromise;
-    const feed = await user.getFeed();
+    const followee = await getFolloweePromise;
 
-    // console.log('feed: ', feed);
-    // console.log('user: ', user);
-
+    user.removeFollowing(followeeAlias);
+    followee.removeFollower(alias);
 
     return {
         statusCode: 200,
@@ -33,9 +36,8 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-          user,
-          feed
-          }),
+            user
+        }),
     };
 
 
@@ -56,4 +58,4 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
 }
 
 
-exports.getFeed = middy(getFeed).use(auth());
+exports.unfollow = middy(unfollow).use(auth());

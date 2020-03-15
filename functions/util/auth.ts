@@ -7,9 +7,7 @@ const auth = () => {
     return ({
         before: (handler,next) => {
 
-            const {token} = handler.event.body;
-            console.log('token', token);
-
+            const {token} = JSON.parse(handler.event.body);
             jwt.verify(token, secret, (error, decoded) => {
                 if(error){
                     console.log('error', error);
