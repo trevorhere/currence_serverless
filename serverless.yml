@@ -25,8 +25,8 @@ provider:
 
 functions:
   signin:
-    handler: ./functions/auth/index.signin
-    description: Submit alias and password, return auth token
+    handler: ./functions/auth/signin.signin
+    description: Signs a user into the app
     events:
       - http:
           method: post
@@ -34,54 +34,64 @@ functions:
           path: signin
           request:
             passThrough: WHEN_NO_TEMPLATES
-  getUser:
-    handler: ./functions/util/user.getUser
-    description: Gets user
+  signup:
+    handler: ./functions/auth/signup.signup
+    description: Signs a new user up for the app
     events:
       - http:
           method: post
           cors: true # <-- CORS!
-          path: getUser
+          path: signup
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  getUser:
+    handler: ./functions/util/getUser.getUser
+    description: Gets user
+    events:
+      - http:
+          method: get 
+          cors: true # <-- CORS!
+          path: user
           request:
             passThrough: WHEN_NO_TEMPLATES
   getFeed:
     handler: ./functions/feed/index.getFeed
-    description: Gets feed of user
+    description: Gets feed of a user
     events:
       - http:
-          method: post
+          method: get
           cors: true # <-- CORS!
-          path: getFeed
+          path: feed
           request:
             passThrough: WHEN_NO_TEMPLATES
   getStory:
     handler: ./functions/story/index.getStory
-    description: Gets story of user
+    description: Gets story of a user
     events:
       - http:
-          method: post
+          method: get
           cors: true # <-- CORS!
-          path: getStory
+          path: story
           request:
             passThrough: WHEN_NO_TEMPLATES
   getFollowers:
     handler: ./functions/followers/index.getFollowers
-    description: Gets story of user
+    description: Gets a users followers
     events:
       - http:
-          method: post
+          method: get
           cors: true # <-- CORS!
-          path: getFollowers
+          path: followers
           request:
             passThrough: WHEN_NO_TEMPLATES
   getFollowing:
     handler: ./functions/following/index.getFollowing
-    description: Gets story of user
+    description: Gets following of a user
     events:
       - http:
-          method: post
+          method: get
           cors: true # <-- CORS!
-          path: getFollowing
+          path: following
           request:
             passThrough: WHEN_NO_TEMPLATES
   follow:
@@ -101,7 +111,37 @@ functions:
       - http:
           method: post
           cors: true # <-- CORS!
-          path: follow
+          path: unfollow
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  isfollowing:
+    handler: ./functions/util/isFollowing.isfollowing
+    description: Returns a boolean indicating whether a user is a follower of another user
+    events:
+      - http:
+          method: get
+          cors: true # <-- CORS!
+          path: isfollowing
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  createStatus:
+    handler: ./functions/status/createStatus.createStatus
+    description: Creates a status.
+    events:
+      - http:
+          method: post
+          cors: true # <-- CORS!
+          path: status
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  isValidAlias:
+    handler: ./functions/util/isValidAlias.isValidAlias
+    description: Returns a boolean indicating whether an alias is valid or not
+    events:
+      - http:
+          method: get
+          cors: true # <-- CORS!
+          path: alias
           request:
             passThrough: WHEN_NO_TEMPLATES
 

@@ -1,24 +1,28 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import UserService from '../../services/UserService';
+const UserService =require('../../services/UserService');
 
-
-
-const getUser: APIGatewayProxyHandler = async (event, _context) => {
+export const isValidAlias: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    const data = JSON.parse(event.body);
-    console.log('INPUT DATA:  ', data);
+    console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
+    const data = event.queryStringParameters;
     const alias = data["alias"];
 
     if(!alias){ 
         throw new Error("[400] Bad input data")
     }
 
+
+    let result = true;
+    if(!alias.match(/^[a-z]+$/i)) result = false;
+    if(alias.length > 50) result = false;
+
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
     const user = await getUserPromise;
-
+    if(user) result = false;
+    
     // console.log('user: ', user);
 
     return {
@@ -28,7 +32,7 @@ const getUser: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-            user
+            result
         }),
     };
 
@@ -47,9 +51,4 @@ const getUser: APIGatewayProxyHandler = async (event, _context) => {
             }),
         };
     }
-}
-
-
-export {
-    getUser
 }

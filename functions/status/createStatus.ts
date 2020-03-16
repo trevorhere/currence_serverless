@@ -1,27 +1,26 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService =require('../../services/UserService');
+import StatusService from '../../services/StatusService';
+
+const middy = require('middy');
+const { auth } = require('../auth/auth');
 
 
-const getStory: APIGatewayProxyHandler = async (event, _context) => {
+const createStatus: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-
-    console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
-    const data = event.queryStringParameters;
+    const data = JSON.parse(event.body);
+    console.log('INPUT DATA:  ', data);
     const alias = data["alias"];
+    const message = data["message"];
 
-    if(!alias){ 
+    if(!alias || !message){ 
         throw new Error("[400] Bad input data")
     }
 
-    const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const user = await getUserPromise;
-    const story = await user.getStatuses();
-
-    // console.log('story: ', story);
-    // console.log('user: ', user);
+    const statusService = new StatusService();
+    const createStatusPromise = statusService.createStatus(alias, message);
+    const status = await createStatusPromise;
 
 
     return {
@@ -31,9 +30,8 @@ const getStory: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-          user,
-          story
-          }),
+            status
+        }),
     };
 
 
@@ -54,6 +52,4 @@ const getStory: APIGatewayProxyHandler = async (event, _context) => {
 }
 
 
-export {
-    getStory
-}
+exports.createStatus = middy(createStatus).use(auth());
