@@ -7,11 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "aws-sdk": "^2.640.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^8.5.1",
     "middy": "^0.34.0",
     "moment": "^2.24.0",
-    "source-map-support": "^0.5.10"
+    "source-map-support": "^0.5.10",
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",

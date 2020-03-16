@@ -1,4 +1,4 @@
-service:
+service: 
   name: currence-backend
   profile: currence-admin
 # app and org for use with dashboard.serverless.com
@@ -18,10 +18,24 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
+  region: us-east-1
+  stage: dev
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    CURRENCE_USERS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_USERS_TABLE}"
+
 
 functions:
   signin:
@@ -147,5 +161,30 @@ functions:
 
 
 
-  #signup
-  # createStatus
+resources:
+  Resources:
+    CurrenceUsersTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          - 
+            AttributeName: alias
+            AttributeType: S
+          - 
+            AttributeName: password
+            AttributeType: S
+          - 
+            AttributeName: picture
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.CURRENCE_USERS_TABLE}
