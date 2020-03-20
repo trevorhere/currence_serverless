@@ -33,8 +33,8 @@ provider:
         - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:GetItem
-        - dynamodb:BulkGet
-        - dynamodb:BulkWrite
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchGet
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
@@ -44,6 +44,8 @@ provider:
         - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchGet
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
@@ -174,49 +176,49 @@ functions:
 
 
 
-resources:
-  Resources:
-    CurrenceUsersTable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: id
-            AttributeType: S
-          - 
-            AttributeName: alias
-            AttributeType: S
-          - 
-            AttributeName: password
-            AttributeType: S
-          - 
-            AttributeName: picture
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.CURRENCE_USERS_TABLE}
-    CurrenceStatusesTable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: id
-            AttributeType: S
-          - 
-            AttributeName: alias
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.CURRENCE_STATUSES_TABLE}
+# resources:
+#   Resources:
+#     CurrenceUsersTable:
+#       Type: AWS::DynamoDB::Table
+#       DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
+#       Properties:
+#         AttributeDefinitions:
+#           -
+#             AttributeName: id
+#             AttributeType: S
+#           - 
+#             AttributeName: alias
+#             AttributeType: S
+#           - 
+#             AttributeName: password
+#             AttributeType: S
+#           - 
+#             AttributeName: picture
+#             AttributeType: S
+#         KeySchema:
+#           -
+#             AttributeName: id
+#             KeyType: HASH
+#         ProvisionedThroughput:
+#           ReadCapacityUnits: 1
+#           WriteCapacityUnits: 1
+#         TableName: ${self:provider.environment.CURRENCE_USERS_TABLE}
+#     CurrenceStatusesTable:
+#       Type: AWS::DynamoDB::Table
+#       DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
+#       Properties:
+#         AttributeDefinitions:
+#           -
+#             AttributeName: id
+#             AttributeType: S
+#           - 
+#             AttributeName: alias
+#             AttributeType: S
+#         KeySchema:
+#           -
+#             AttributeName: id
+#             KeyType: HASH
+#         ProvisionedThroughput:
+#           ReadCapacityUnits: 1
+#           WriteCapacityUnits: 1
+#         TableName: ${self:provider.environment.CURRENCE_STATUSES_TABLE}
