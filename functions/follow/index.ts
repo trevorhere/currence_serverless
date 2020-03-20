@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import UserService from '../../services/UserService';
+const UserService =require('../../services/UserService');
 
 const middy = require('middy');
 const { auth } = require('../auth/auth');
@@ -26,12 +26,12 @@ const follow: APIGatewayProxyHandler = async (event, _context) => {
     const user = await getUserPromise;
     const followee = await getFolloweePromise;
 
-    user.addFollowing(followeeAlias);
-    followee.addFollower(alias);
+    user.following.push(followeeAlias);
+    followee.followers.push(alias);
 
 
-    // console.log('feed: ', feed);
-    // console.log('user: ', user);
+    console.log('followee: ', followee);
+    console.log('user: ', user);
 
 
     return {

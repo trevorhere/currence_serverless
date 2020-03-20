@@ -1,8 +1,9 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 const AuthService = require('../../services/AuthService');
-const secret = 'mysecretsshhh';
 const jwt = require('jsonwebtoken');
+const secret = process.env.TOKEN_SECRET;
+
 
 
 export const signin: APIGatewayProxyHandler = async (event, _context) => {
@@ -21,7 +22,7 @@ export const signin: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const auth = new AuthService();
-    const authenticatedPromise =  auth.signin(alias, password);
+    const authenticatedPromise =  auth.authenticateUser(alias, password);
     const authenticated = await authenticatedPromise;
 
     console.log("Authenticated: ", authenticated);

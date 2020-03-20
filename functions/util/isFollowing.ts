@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService =require('../../services/UserService');
+const UserService = require('../../services/UserService');
 
 export const isFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
@@ -19,9 +19,10 @@ export const isFollowing: APIGatewayProxyHandler = async (event, _context) => {
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
     const user = await getUserPromise;
+    console.log('get user in is following: ', user);
+
     const result = (user?.getFollowee(followeeAlias) !== undefined)
 
-    // console.log('user: ', user);
 
     return {
         statusCode: 200,

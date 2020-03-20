@@ -4,7 +4,7 @@ import { User, Status } from '../models';
 export default class FeedService {
     FeedService(){}
 
-    getFeed = async(alias: string): Promise< Status[] | null> => {
+    getFeed = async(alias: string): Promise< string[] | null> => {
         const userPromise = getUser(alias);
         const user: User = await userPromise;
         const feed = await user.getFeed();

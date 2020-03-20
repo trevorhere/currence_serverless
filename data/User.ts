@@ -1,57 +1,122 @@
 const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-import { seedDB, getUsers, addUser } from '../db/index'
-import { User } from '../models';
-
+import { User, Status } from '../models'
 
 const getUser = async (alias: string): Promise<{}>  => {
-    seedDB();
+    try {
 
-    const userPromise =  getUsers().find(user =>  user["alias"] == alias)
-    const user = await userPromise;
-    // console.log('querying user from db: ', user);
-    return  user;
+        const params = {
+            TableName: process.env.CURRENCE_USERS_TABLE,
+            Key: {
+                alias
+            },
+        };
+
+        const data = async () => {
+            let user = await dynamoDb.get(params).promise();
+            // console.log('get user in getuser: ', user);
+            return user;
+        } 
+
+        const { Item } = await data();
+        return Item;
+    } catch (err) {
+        console.log('ERROR::DATA::User.getUser: ', err.message);
+        throw new Error(err.message);
+    }
 }
 
-const createUser = async (alias: string, password: string, picture: string): Promise<{}>  => {
-
-    // seedDB();
-
+const createUser = async (user: User): Promise<{}>  => {
     const timestamp = new Date().getTime();
-    const user = new User(alias, alias, alias, password, picture);
-    addUser(user);
- 
-    console.log('table name: ', process.env.CURRENCE_USERS_TABLE)
-
     const params = {
         TableName: process.env.CURRENCE_USERS_TABLE,
         Item: {
             id: uuid.v1(),
-            alias,
-            password,
-            picture,
+            alias: user.alias,
+            password: user.password,
+            picture: user.picture,
+            followers:[],
+            following:[],
+            statuses:[],
+            feed:[],
             createdAt: timestamp,
             updatedAt: timestamp,
         },
     };
 
-    dynamoDb.put(params, (error) => {
+    return await dynamoDb.put(params, (error) => {
         // handle potential errors
         if (error) {
             console.error(error);
             throw new Error('Couldn\'t create the user.');
+        } else {
+            return params.Item
         }
     });
-        
+}
 
-    return params.Item;
+const getUsers = async (aliases: string[]): Promise<string[]>  => {
+
+    let keys = aliases.map( alias => {
+        return { 'alias': alias}
+    })
+
+
+    let queryParams = {RequestItems: {}};
+        queryParams.RequestItems[process.env.CURRENCE_USERS_TABLE] = {
+        Keys: keys,
+    };
+
+    try {
+        const data = async () => {
+            let data = await dynamoDb.batchGet(queryParams).promise();
+            return data;
+        } 
+
+        const response = await data();
+        return await response.Responses[process.env.CURRENCE_USERS_TABLE];
+
+    } catch (err) {
+        console.log('ERROR::Data::User.getBulkUsers', err.message);
+        throw new Error(err.message);
+    }
+}
+
+
+
+const updateUserStatuses = async (alias: string, statuses: Status[]): Promise<{}>  => {
+    // console.log('alias in update status: ', alias);
+    // console.log('statuses in update status: ', statuses);
+
+    const timestamp = new Date().getTime();
+    const params = {
+        TableName: process.env.CURRENCE_USERS_TABLE,
+        Key: {
+            alias: alias
+        },
+        ExpressionAttributeValues: {
+            ':statuses': [...statuses],            
+            ':updatedAt': timestamp,
+        },
+        UpdateExpression: 'SET statuses = :statuses, updatedAt = :updatedAt',
+        ReturnValues: 'ALL_NEW',
+    };
+
+    return await dynamoDb.update(params, (error, result) => {
+        // handle potential errors
+        if (error) {
+            console.error(error);
+            throw new Error('Couldn\'t update user statuses.');
+        } else {
+            return result.Attributes
+        }
+    });
 }
 
 export {
     getUser,
-    createUser
+    createUser,
+    updateUserStatuses,
+    getUsers
 }
-
-

@@ -24,8 +24,21 @@ provider:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    CURRENCE_USERS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    TOKEN_SECRET: PragueOkaikweiTeriPetrolulAwful
+    CURRENCE_USERS_TABLE: CURRENCE_USERS_TABLE # ${self:service}-${opt:stage, self:provider.stage}
+    CURRENCE_STATUSES_TABLE: CURRENCE_STATUSES_TABLE # ${self:service}-${opt:stage, self:provider.stage}
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:BulkGet
+        - dynamodb:BulkWrite
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_USERS_TABLE}"
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -34,7 +47,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_USERS_TABLE}"
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_STATUSES_TABLE}"
 
 
 functions:
@@ -128,14 +141,14 @@ functions:
           path: unfollow
           request:
             passThrough: WHEN_NO_TEMPLATES
-  isfollowing:
-    handler: ./functions/util/isFollowing.isfollowing
+  isFollowing:
+    handler: ./functions/util/isFollowing.isFollowing
     description: Returns a boolean indicating whether a user is a follower of another user
     events:
       - http:
           method: get
           cors: true # <-- CORS!
-          path: isfollowing
+          path: isFollowing
           request:
             passThrough: WHEN_NO_TEMPLATES
   createStatus:
@@ -188,3 +201,22 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.CURRENCE_USERS_TABLE}
+    CurrenceStatusesTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain # Keeps around the DynamoDB resource when we redeploy/destroy
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          - 
+            AttributeName: alias
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.CURRENCE_STATUSES_TABLE}

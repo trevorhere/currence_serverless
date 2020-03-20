@@ -5,7 +5,6 @@ import StatusService from '../../services/StatusService';
 const middy = require('middy');
 const { auth } = require('../auth/auth');
 
-
 const createStatus: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
@@ -13,14 +12,15 @@ const createStatus: APIGatewayProxyHandler = async (event, _context) => {
     console.log('INPUT DATA:  ', data);
     const alias = data["alias"];
     const message = data["message"];
+    console.log('INPUT MESSAGE:  ', message);
+
 
     if(!alias || !message){ 
         throw new Error("[400] Bad input data")
     }
 
     const statusService = new StatusService();
-    const createStatusPromise = statusService.createStatus(alias, message);
-    const status = await createStatusPromise;
+    const status = await statusService.createStatus(alias, message);
 
 
     return {
@@ -30,25 +30,26 @@ const createStatus: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
+            message: "status successfully created",
             status
         }),
     };
 
 
     } catch(error){
-    console.log('FEED::ERROR: ', error.message);
-    return {
-      statusCode:(error.message.includes("400"))? 400 : 500,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-      },
-      body: JSON.stringify({
-          message: error.message,
-          input: event
-        }),
-    };
-  }
+        console.log('STATUS::ERROR: ', error.message);
+        return {
+            statusCode:(error.message.includes("400"))? 400 : 500,
+            headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+        },
+        body: JSON.stringify({
+            message: error.message,
+            input: event
+            }),
+        };
+    }
 }
 
 

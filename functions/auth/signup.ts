@@ -1,11 +1,11 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
+const jwt = require('jsonwebtoken');
+const secret = process.env.TOKEN_SECRET;
+import { User } from '../../models/User'
+
 const AuthService = require('../../services/AuthService');
 const UserService = require('../../services/UserService');
-
-
-const secret = 'mysecretsshhh';
-const jwt = require('jsonwebtoken');
 
 
 export const signup: APIGatewayProxyHandler = async (event, _context) => {
@@ -26,33 +26,21 @@ export const signup: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const auth = new AuthService();
+    const passwordHash = await auth.generateHash(password);
+    const user = new User(alias, passwordHash, picture);
     const userService = new UserService();
-    const passwordHash = auth.generateHash(password);
-    const createUserPromise = userService.createUser(alias, passwordHash, picture);
-    const user = await createUserPromise;
-    user;
+    const createUserPromise = userService.createUser(user);
+    const newUser = await createUserPromise;
 
-
-
-    const authenticatedPromise =  auth.signin(alias, password);
-    const authenticated = await authenticatedPromise;
-
-    console.log("Authenticated: ", authenticated);
-
-    const body = authenticated ? 
+    const body =
     {
         message: 'User successfully created.',
-        authenticated,
+        authenticated: true,
         alias,
         token: jwt.sign({alias}, secret, {
             expiresIn: '1h'
         })
-    } : {
-        message: 'Unable to create user.',
-        authenticated,
-        alias,
-        token: null
-    }
+    } 
     
     return {
         statusCode: 200,

@@ -17,10 +17,12 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
         throw new Error("[400] Bad input data")
     }
 
+
+
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
     const user = await getUserPromise;
-    const followingAliases = await user.getFollowing();
+    const followingAliases = [...user.following];
 
 
     const userLookup = async (alias:string) => {
@@ -32,7 +34,6 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     let following = await buildFollowing().then(f => {
-        console.log('following: ', f);
         return [...f];
     })
 

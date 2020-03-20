@@ -1,6 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService =require('../../services/UserService');
+import StatusService from '../../services/StatusService';
+
 
 
 const getStory: APIGatewayProxyHandler = async (event, _context) => {
@@ -15,14 +16,8 @@ const getStory: APIGatewayProxyHandler = async (event, _context) => {
         throw new Error("[400] Bad input data")
     }
 
-    const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const user = await getUserPromise;
-    const story = await user.getStatuses();
-
-    // console.log('story: ', story);
-    // console.log('user: ', user);
-
+    const statusService = new StatusService();
+    const story = await statusService.buildStory(alias);
 
     return {
         statusCode: 200,
@@ -31,14 +26,13 @@ const getStory: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-          user,
           story
           }),
     };
 
 
     } catch(error){
-    console.log('FEED::ERROR: ', error.message);
+    console.log('STORY::ERROR: ', error.message);
     return {
       statusCode:(error.message.includes("400"))? 400 : 500,
       headers: {

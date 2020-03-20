@@ -20,7 +20,7 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
     const user = await getUserPromise;
-    const followersAliases = await user.getFollowers();
+    const followersAliases = [...user.followers];
 
 
     const userLookup = async (alias:string) => {

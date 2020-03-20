@@ -1,6 +1,8 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 const UserService =require('../../services/UserService');
+import StatusService from '../../services/StatusService';
+
 
 const middy = require('middy');
 const { auth } = require('../auth/auth');
@@ -20,11 +22,15 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
     const user = await getUserPromise;
-    const feed = await user.getFeed();
 
-    // console.log('feed: ', feed);
-    // console.log('user: ', user);
+    const statusService = new StatusService();
+    const feed = await statusService.buildFeed(alias);
 
+
+    // console.log('user in get feed: ', user);
+    // const feed = [...user?.feed];
+      
+    console.log('feed: ', feed);
 
     return {
         statusCode: 200,
