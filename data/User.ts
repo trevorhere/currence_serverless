@@ -62,7 +62,6 @@ const getUsers = async (aliases: string[]): Promise<string[]>  => {
         return { 'alias': alias}
     })
 
-
     let queryParams = {RequestItems: {}};
         queryParams.RequestItems[process.env.CURRENCE_USERS_TABLE] = {
         Keys: keys,
@@ -114,9 +113,70 @@ const updateUserStatuses = async (alias: string, statuses: Status[]): Promise<{}
     });
 }
 
+const updateUserFollowers = async (alias: string, followers: []): Promise<{}>  => {
+    // console.log('alias in update status: ', alias);
+    // console.log('statuses in update status: ', statuses);
+
+    const timestamp = new Date().getTime();
+    const params = {
+        TableName: process.env.CURRENCE_USERS_TABLE,
+        Key: {
+            alias: alias
+        },
+        ExpressionAttributeValues: {
+            ':followers': [...followers],            
+            ':updatedAt': timestamp,
+        },
+        UpdateExpression: 'SET followers = :followers, updatedAt = :updatedAt',
+        ReturnValues: 'ALL_NEW',
+    };
+
+    return await dynamoDb.update(params, (error, result) => {
+        // handle potential errors
+        if (error) {
+            console.error(error);
+            throw new Error('Couldn\'t update user followers.');
+        } else {
+            return result.Attributes
+        }
+    });
+}
+
+
+const updateUserFollowing = async (alias: string, following: []): Promise<{}>  => {
+    // console.log('alias in update status: ', alias);
+    // console.log('statuses in update status: ', statuses);
+
+    const timestamp = new Date().getTime();
+    const params = {
+        TableName: process.env.CURRENCE_USERS_TABLE,
+        Key: {
+            alias: alias
+        },
+        ExpressionAttributeValues: {
+            ':following': [...following],            
+            ':updatedAt': timestamp,
+        },
+        UpdateExpression: 'SET following = :following, updatedAt = :updatedAt',
+        ReturnValues: 'ALL_NEW',
+    };
+
+    return await dynamoDb.update(params, (error, result) => {
+        // handle potential errors
+        if (error) {
+            console.error(error);
+            throw new Error('Couldn\'t update user following.');
+        } else {
+            return result.Attributes
+        }
+    });
+}
+
 export {
     getUser,
     createUser,
     updateUserStatuses,
+    updateUserFollowers,
+    updateUserFollowing,
     getUsers
 }

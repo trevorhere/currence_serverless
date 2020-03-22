@@ -23,18 +23,22 @@ export default class StatusService {
         const user = await getUser(alias);
         const statuses = await getStatuses([...user.statuses], alias)
         statuses.map(status => { status['picture'] = user.picture})
+        let compare = (a,b) => {
+            let dateA = a.createdAt;
+            let dateB = b.createdAt;
+            return dateA >= dateB ? -1 : 1
+        }
+        
+        statuses.sort(compare)
         return statuses;
     }
 
     buildFeed = async(alias: string): Promise <Status[] | null> => {
         const user = await getUser(alias);
 
-        if(!user.following.length)
-            return null;
+        if(!user.following.length) return null;
 
         const following = await getUsers(user.following);
-
-
 
         console.log('user in build feed: ' , user);
         console.log('following in build feed: ' , following);
@@ -44,7 +48,7 @@ export default class StatusService {
             return Promise.all(
                 following.map( async followee => {
                     const statuses = await getStatuses([...followee.statuses], followee.alias);
-                    console.log('statuses: ', ...statuses);
+                    // console.log('statuses: ', ...statuses);
                     statuses.map(status => {
                         status['picture'] = followee.picture
                         feed.push(status);
@@ -55,7 +59,25 @@ export default class StatusService {
 
         await buildFeedFollowers()
 
-        const statuses = await getStatuses([...user.statuses], alias)
-        return feed;
+        const statuses = await getStatuses([...user.statuses], alias);
+        statuses.map(status => {
+            status['picture'] = user.picture
+        })
+
+        
+        // console.log('statuses x: ', statuses);
+        // console.log('feed x: ', feed);
+        let result = feed.concat(statuses);
+
+        let compare = (a,b) => {
+            let dateA = a.createdAt;
+            let dateB = b.createdAt;
+            return dateA >= dateB ? -1 : 1
+        }
+        
+        result.sort(compare)
+
+        // console.log('result: ', result);
+        return result;
     }
 }

@@ -26,8 +26,12 @@ const unfollow: APIGatewayProxyHandler = async (event, _context) => {
     const user = await getUserPromise;
     const followee = await getFolloweePromise;
 
-    user.removeFollowing(followeeAlias);
-    followee.removeFollower(alias);
+    let following = [...user.following.filter(f => f !==  followeeAlias)]
+    let followers = [...followee.followers.filter(f => f !==  alias)]
+
+    userService.updateUserFollowers(user.alias, following)
+    userService.updateUserFollowing(followeeAlias, followers)
+
 
     return {
         statusCode: 200,

@@ -9,6 +9,8 @@ const { auth } = require('../auth/auth');
 const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
+    console.log('event: ', event);
+
     console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;
     const alias = data["alias"];
@@ -16,8 +18,6 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     if(!alias){ 
         throw new Error("[400] Bad input data")
     }
-
-
 
     const userService = new UserService();
     const getUserPromise = userService.getUser(alias);
