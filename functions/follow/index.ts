@@ -20,19 +20,7 @@ const follow: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const getFolloweePromise = userService.getUser(followeeAlias);
-
-    const user = await getUserPromise;
-    const followee = await getFolloweePromise;
-
-    user.following.push(followeeAlias);
-    followee.followers.push(alias);
-
-
-    console.log('followee: ', followee);
-    console.log('user: ', user);
-
+    let user  = await userService.follow(alias, followeeAlias)
 
     return {
         statusCode: 200,

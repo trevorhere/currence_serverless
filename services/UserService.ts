@@ -1,4 +1,4 @@
-const { getUser, createUser } = require('../data/User');
+const { getUser, createUser, updateUserFollowing, updateUserFollowers } = require('../data/User');
 import { User } from '../models';
 
 class UserService {
@@ -33,6 +33,42 @@ class UserService {
         })
 
         return followers;
+    }
+
+    unfollow = async (userAlias: string, followeeAlias:string): Promise< User | null> => {
+        const getUserPromise = getUser(userAlias);
+        const getFolloweePromise = getUser(followeeAlias);
+        
+        const user = await getUserPromise;
+        const followee = await getFolloweePromise;
+
+        let following = [...user.following.filter(f => f !==  followeeAlias)]
+        let followers = [...followee.followers.filter(f => f !==  userAlias)]
+
+        await updateUserFollowing(user.alias, following)
+        await updateUserFollowers(followeeAlias, followers)
+
+        return user;
+    }
+
+    follow = async (userAlias: string, followeeAlias:string): Promise< User | null> => {
+        const getUserPromise = getUser(userAlias);
+        const getFolloweePromise = getUser(followeeAlias);
+        
+        const user = await getUserPromise;
+        const followee = await getFolloweePromise;
+
+        let following = [...user.following]
+        following.push(followeeAlias)
+
+        let followers = [...followee.followers]
+        followers.push(userAlias)
+
+
+        await updateUserFollowing(user.alias, following)
+        await updateUserFollowers(followeeAlias, followers)
+
+        return user;
     }
 }
 

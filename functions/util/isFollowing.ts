@@ -1,28 +1,21 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService = require('../../services/UserService');
+import UtilService from '../../services/UtilService'
+
 
 export const isFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-        console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
-        const data = event.queryStringParameters;
-        const alias = data["alias"];
-        const followeeAlias = data["followeeAlias"];
+    console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
+    const data = event.queryStringParameters;
+    const alias = data["alias"];
+    const followeeAlias = data["followeeAlias"];
 
-
-
-    if(!alias || !followeeAlias){ 
+    if(!alias || !followeeAlias)
         throw new Error("[400] Bad input data")
-    }
 
-    const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const user = await getUserPromise;
-    console.log('get user in is following: ', user);
-
-    const result = (user?.getFollowee(followeeAlias) !== undefined)
-
+    const utilService = new UtilService();
+    let result = await utilService.isFollowing(alias, followeeAlias);
 
     return {
         statusCode: 200,
@@ -37,7 +30,7 @@ export const isFollowing: APIGatewayProxyHandler = async (event, _context) => {
 
 
     } catch(error){
-        console.log('FEED::ERROR: ', error.message);
+        console.log('ISFOLLOWING::ERROR: ', error.message);
         return {
             statusCode:(error.message.includes("400"))? 400 : 500,
             headers: {

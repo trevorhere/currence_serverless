@@ -20,17 +20,7 @@ const unfollow: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const getFolloweePromise = userService.getUser(followeeAlias);
-
-    const user = await getUserPromise;
-    const followee = await getFolloweePromise;
-
-    let following = [...user.following.filter(f => f !==  followeeAlias)]
-    let followers = [...followee.followers.filter(f => f !==  alias)]
-
-    userService.updateUserFollowers(user.alias, following)
-    userService.updateUserFollowing(followeeAlias, followers)
+    let user  = await userService.unfollow(alias, followeeAlias)
 
 
     return {
@@ -46,7 +36,7 @@ const unfollow: APIGatewayProxyHandler = async (event, _context) => {
 
 
     } catch(error){
-    console.log('FEED::ERROR: ', error.message);
+    console.log('UNFOLLOW::ERROR: ', error.message);
     return {
       statusCode:(error.message.includes("400"))? 400 : 500,
       headers: {
