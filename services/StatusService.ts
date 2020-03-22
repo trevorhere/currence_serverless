@@ -36,9 +36,22 @@ export default class StatusService {
     buildFeed = async(alias: string): Promise <Status[] | null> => {
         const user = await getUser(alias);
 
-        if(!user.following.length) return null;
+        let compare = (a,b) => {
+            let dateA = a.createdAt;
+            let dateB = b.createdAt;
+            return dateA >= dateB ? -1 : 1
+        }
+
+        if(!user.following.length){
+            const statuses = await getStatuses([...user.statuses], alias);
+            statuses.map(status => {
+                status['picture'] = user.picture
+            })
+            return statuses.sort(compare);
+        }
 
         const following = await getUsers(user.following);
+        
 
         console.log('user in build feed: ' , user);
         console.log('following in build feed: ' , following);
@@ -67,17 +80,14 @@ export default class StatusService {
         
         // console.log('statuses x: ', statuses);
         // console.log('feed x: ', feed);
-        let result = feed.concat(statuses);
 
-        let compare = (a,b) => {
-            let dateA = a.createdAt;
-            let dateB = b.createdAt;
-            return dateA >= dateB ? -1 : 1
-        }
+        let result = statuses.concat(feed);
+
+
         
         result.sort(compare)
 
-        // console.log('result: ', result);
+        console.log('result: ', result);
         return result;
     }
 }
