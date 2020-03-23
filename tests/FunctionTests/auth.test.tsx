@@ -15,6 +15,6 @@ it('signin runs', async () => {
 
 it('signup runs', async () => {
         let res = await signup.signup(signupEvent)
-        console.log('res: ', res)
+        // console.log('res: ', res)
         expect(res).toBeDefined;
 })
