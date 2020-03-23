@@ -3,26 +3,8 @@ const storyEvent = require('../utils/storyEvent')
 jest.mock('../../data/User', () => jest.requireActual('../../__mocks__/User'))
 jest.mock('../../data/Status', () => jest.requireActual('../../__mocks__/Status'))
 
-test('getStory runs', () => {
+test('getStory runs', async () => {
+    let res = await getStory.getStory(storyEvent)
+    expect(res).toBeDefined;
 
-    let cb = async (f) => {
-        await console.log('f: ', f);
-    }
-
-    let feed = async() => {
-        getStory.getStory(storyEvent, cb).then(
-            res => {
-                // console.log('res: ', res);
-                expect(res).toBeDefined;
-
-            }
-        ).catch(e => {
-            console.log(e)
-        })
-
-    }
-
-    feed();
-
-    expect(feed).toBeCalled
 })

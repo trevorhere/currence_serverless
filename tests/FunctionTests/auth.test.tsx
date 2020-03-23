@@ -8,44 +8,13 @@ const signup = require('../../functions/auth/signup')
 const signinEvent = require('../utils/signinEvent')
 const signupEvent = require('../utils/signupEvent')
 
-it('signin runs', () => {
-    try{
-
-    let run = async() => {
-        signin(signinEvent, null).then(
-            res => {
-                expect(res).toBeDefined;
-            }
-        ).catch(e => {
-            console.log(e)
-        })
-    }
-
-    run();
-
-    expect(run).toBeCalled
-
-    } catch(e){
-        console.log(e)
-    }
+it('signin runs', async () => {
+    let res = await signin.signin(signinEvent)
+    expect(res).toBeDefined;
 })
 
-it('signup runs', () => {
-    try{
-    let run = async() => {
-        signup(signupEvent, null).then(
-            res => {
-                expect(res).toBeDefined;
-            }
-        ).catch(e => {
-            console.log(e)
-        })
-    }
-
-    run();
-
-    expect(run).toBeCalled
-} catch(e){
-    console.log(e)
-}
+it('signup runs', async () => {
+        let res = await signup.signup(signupEvent)
+        console.log('res: ', res)
+        expect(res).toBeDefined;
 })

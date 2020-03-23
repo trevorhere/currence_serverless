@@ -8,13 +8,13 @@ const { auth } = require('../auth/auth');
 const createStatus: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-        console.log('event: ', event);
+       // console.log('event: ', event);
 
     const data = JSON.parse(event.body);
-    console.log('INPUT DATA:  ', data);
+    // console.log('INPUT DATA:  ', data);
     const alias = data["alias"];
     const message = data["message"];
-    console.log('INPUT MESSAGE:  ', message);
+   //  console.log('INPUT MESSAGE:  ', message);
 
 
     if(!alias || !message){ 

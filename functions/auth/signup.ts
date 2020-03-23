@@ -7,7 +7,7 @@ import { User } from '../../models/User'
 import UserService from '../../services/UserService';
 import AuthService from '../../services/AuthService';
 
-export const signup: APIGatewayProxyHandler = async (event, _context) => {
+const signup: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
 
@@ -69,4 +69,8 @@ export const signup: APIGatewayProxyHandler = async (event, _context) => {
         }),
     };
     }
+}
+
+export {
+    signup
 }

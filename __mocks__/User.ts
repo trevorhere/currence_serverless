@@ -97,7 +97,7 @@ const createUser = async (): Promise<{}>  => {
 }
 
 const updateUserStatuses = async (): Promise<{}>  => {
-    console.log('mock was used')
+    // console.log('mock was used')
     let user = {alias: "x", password: "x"}
     return Promise.resolve(user);    
 }

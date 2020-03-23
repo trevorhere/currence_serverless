@@ -12,7 +12,7 @@ export default class StatusService {
         const createdStatus = await statusPromise;
 
         const user = await getUser(status.alias);
-        console.log('user: ', user)
+        // console.log('user: ', user)
         const statuses = [...user.statuses]
 
         statuses.push(status.id);

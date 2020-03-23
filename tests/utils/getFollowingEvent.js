@@ -35,14 +35,14 @@ const getFollowingEvent = {
     multiValueQueryStringParameters: {
       alias: [ 'x' ],
       token: [
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGlhcyI6IngiLCJpYXQiOjE1ODQ5MTcxNjAsImV4cCI6MTU4NDkyMDc2MH0.ubjpz8CFKnz7IN6PAdGWQPAXUOSlFCPaTEnoU5bkLEw'
+        process.env.TOKEN
       ]
     },
     path: '/following',
     pathParameters: null,
     queryStringParameters: {
       alias: 'x',
-      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGlhcyI6IngiLCJpYXQiOjE1ODQ5MTcxNjAsImV4cCI6MTU4NDkyMDc2MH0.ubjpz8CFKnz7IN6PAdGWQPAXUOSlFCPaTEnoU5bkLEw'
+      token:   process.env.TOKEN
     },
     requestContext: {
       accountId: 'offlineContext_accountId',

@@ -9,9 +9,9 @@ const { auth } = require('../auth/auth');
 const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-     console.log('event: ', event);
+    // console.log('event: ', event);
 
-    console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
+    // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;
     const alias = data["alias"];
 
@@ -37,7 +37,7 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
         return [...f];
     })
 
-    console.log('following: ', following);
+    // console.log('following: ', following);
     // console.log('user: ', user);
 
 

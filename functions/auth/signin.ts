@@ -4,9 +4,10 @@ import AuthService from '../../services/AuthService';
 const jwt = require('jsonwebtoken');
 const secret = process.env.TOKEN_SECRET;
 
-export const signin: APIGatewayProxyHandler = async (event, _context) => {
+const signin: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
+    console.log('copy me: ', event);
 
     const data = JSON.parse(event.body); 
     const alias = data["alias"];
@@ -69,4 +70,8 @@ export const signin: APIGatewayProxyHandler = async (event, _context) => {
         }),
     };
     }
+}
+
+export {
+    signin
 }

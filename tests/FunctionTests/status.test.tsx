@@ -4,21 +4,9 @@ const createStatusEvent = require('../utils/createStatusEvent')
 jest.mock('../../data/User', () => jest.requireActual('../../__mocks__/User'))
 jest.mock('../../data/Status', () => jest.requireActual('../../__mocks__/Status'))
 
-test('createStatus runs', () => {
+test('createStatus runs', async () => {
 
-    let run = async() => {
-        createStatus(createStatusEvent).then(
-            res => {
-                console.log('res: ', res);
-                expect(res).toBeDefined;
-            }
-        ).catch(e => {
-            console.log(e)
-        })
+    let res = await createStatus.createStatus(createStatusEvent)
+    expect(res).toBeDefined;
 
-    }
-
-    run();
-
-    expect(run).toBeCalled
 })
