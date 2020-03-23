@@ -43,7 +43,10 @@ const getStatuses = async (statuses: string[], alias: string): Promise<string[]>
         } 
 
         const response = await data();
+        // console.log('copy me: ', await response.Responses[process.env.CURRENCE_STATUSES_TABLE])
         return await response.Responses[process.env.CURRENCE_STATUSES_TABLE];
+
+        
 
     } catch (err) {
         console.log('ERROR::Data::Status.getStatuses:', err.message);
@@ -69,6 +72,7 @@ const createStatus = async (status: Status): Promise<{}>  => {
 
         const data = async () => {
             let status = await dynamoDb.put(params).promise();
+            status;
             return params.Item;
         } 
 

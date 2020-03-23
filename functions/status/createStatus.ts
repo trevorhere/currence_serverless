@@ -8,6 +8,8 @@ const { auth } = require('../auth/auth');
 const createStatus: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
+        console.log('event: ', event);
+
     const data = JSON.parse(event.body);
     console.log('INPUT DATA:  ', data);
     const alias = data["alias"];

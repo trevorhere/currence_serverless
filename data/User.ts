@@ -7,7 +7,7 @@ const getUser = async (alias: string): Promise<{}>  => {
     try {
 
         const params = {
-            TableName: process.env.CURRENCE_USERS_TABLE,
+            TableName: process.env.CURRENCE_USERS_TABLE || "CURRENCT_USERS_TABLE",
             Key: {
                 alias
             },
@@ -88,6 +88,7 @@ const updateUserStatuses = async (alias: string, statuses: Status[]): Promise<{}
     // console.log('alias in update status: ', alias);
     // console.log('statuses in update status: ', statuses);
 
+
     const timestamp = new Date().getTime();
     const params = {
         TableName: process.env.CURRENCE_USERS_TABLE,
@@ -146,6 +147,7 @@ const updateUserFollowers = async (alias: string, followers: []): Promise<{}>  =
 const updateUserFollowing = async (alias: string, following: []): Promise<{}>  => {
     // console.log('alias in update status: ', alias);
     // console.log('statuses in update status: ', statuses);
+
 
     const timestamp = new Date().getTime();
     const params = {

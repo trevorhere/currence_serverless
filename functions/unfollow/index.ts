@@ -1,16 +1,17 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService =require('../../services/UserService');
+import UserService from '../../services/UserService';
 
 const middy = require('middy');
 const { auth } = require('../auth/auth');
 
-
 const unfollow: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
+    // console.log('event: ', event);
+
     const data = JSON.parse(event.body);
-    console.log('INPUT DATA:  ', data);
+    // console.log('INPUT DATA:  ', data);
     const alias = data["alias"];
     const followeeAlias = data["followeeAlias"];
 

@@ -1,13 +1,12 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const AuthService = require('../../services/AuthService');
+import AuthService from '../../services/AuthService';
 const jwt = require('jsonwebtoken');
 const secret = process.env.TOKEN_SECRET;
 
-
-
 export const signin: APIGatewayProxyHandler = async (event, _context) => {
     try {  
+
 
     const data = JSON.parse(event.body); 
     const alias = data["alias"];
@@ -24,6 +23,10 @@ export const signin: APIGatewayProxyHandler = async (event, _context) => {
     const auth = new AuthService();
     const authenticatedPromise =  auth.authenticateUser(alias, password);
     const authenticated = await authenticatedPromise;
+
+    // console.log('nice token: ', jwt.sign({alias}, secret, {
+    //     // expiresIn: '1h'
+    // }))
 
     console.log("Authenticated: ", authenticated);
 

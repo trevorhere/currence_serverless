@@ -6,12 +6,13 @@ import { Status } from '../models';
 export default class StatusService {
     StatusService(){}
 
-    createStatus = async (alias:string, message:string ): Promise< Status | null> => {
+    createStatus = async (alias:string, message:string ): Promise< {} | null> => {
         const status = new Status(uuid.v1(), alias, message);
         const statusPromise = createStatus(status);
         const createdStatus = await statusPromise;
 
         const user = await getUser(status.alias);
+        console.log('user: ', user)
         const statuses = [...user.statuses]
 
         statuses.push(status.id);
@@ -19,7 +20,7 @@ export default class StatusService {
         return createdStatus;
     }
 
-    buildStory = async(alias: string): Promise <Status[] | null> => {
+    buildStory = async(alias: string): Promise < any[] | null> => {
         const user = await getUser(alias);
         const statuses = await getStatuses([...user.statuses], alias)
         statuses.map(status => { status['picture'] = user.picture})
@@ -33,7 +34,7 @@ export default class StatusService {
         return statuses;
     }
 
-    buildFeed = async(alias: string): Promise <Status[] | null> => {
+    buildFeed = async(alias: string, count: number): Promise <any[] | null> => {
         const user = await getUser(alias);
 
         let compare = (a,b) => {
@@ -42,19 +43,20 @@ export default class StatusService {
             return dateA >= dateB ? -1 : 1
         }
 
-        if(!user.following.length){
+
+        if(!user?.following.length){
             const statuses = await getStatuses([...user.statuses], alias);
             statuses.map(status => {
                 status['picture'] = user.picture
             })
-            return statuses.sort(compare);
+            return statuses.sort(compare).slice(0,count)
         }
+
 
         const following = await getUsers(user.following);
         
-
-        console.log('user in build feed: ' , user);
-        console.log('following in build feed: ' , following);
+        // console.log('user in build feed: ' , user);
+        // console.log('following in build feed: ' , following);
 
         let feed = [];
         const buildFeedFollowers = async () => {
@@ -67,7 +69,10 @@ export default class StatusService {
                         feed.push(status);
                     })
                     return [...statuses];
-            }))
+            })
+            ).catch(e => {
+                console.log('promise error:', e.message);
+            })
         }
 
         await buildFeedFollowers()
@@ -77,17 +82,10 @@ export default class StatusService {
             status['picture'] = user.picture
         })
 
-        
-        // console.log('statuses x: ', statuses);
-        // console.log('feed x: ', feed);
+        let result = statuses.concat(feed).sort(compare).slice(0,count);
 
-        let result = statuses.concat(feed);
-
-
-        
-        result.sort(compare)
-
-        console.log('result: ', result);
-        return result;
+        //console.log('result: ', result);
+        // console.log('res: ', result)
+        return result
     }
 }

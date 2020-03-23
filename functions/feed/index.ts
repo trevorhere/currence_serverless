@@ -1,8 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService =require('../../services/UserService');
 import StatusService from '../../services/StatusService';
-
 
 const middy = require('middy');
 const { auth } = require('../auth/auth');
@@ -11,26 +9,18 @@ const { auth } = require('../auth/auth');
 const getFeed: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-      console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
+      // console.log('event: ', event);
+      // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
       const data = event.queryStringParameters;
       const alias = data["alias"];
+      const count = parseInt(data["count"])
 
     if(!alias){ 
         throw new Error("[400] Bad input data")
     }
 
-    const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const user = await getUserPromise;
-
     const statusService = new StatusService();
-    const feed = await statusService.buildFeed(alias);
-
-
-    // console.log('user in get feed: ', user);
-    // const feed = [...user?.feed];
-      
-    console.log('feed: ', feed);
+    const feed = await statusService.buildFeed(alias, count);
 
     return {
         statusCode: 200,
@@ -39,7 +29,6 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-          user,
           feed
           }),
     };

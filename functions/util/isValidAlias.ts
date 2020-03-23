@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService =require('../../services/UserService');
+import UserService from '../../services/UserService';
 
 export const isValidAlias: APIGatewayProxyHandler = async (event, _context) => {
     try {  

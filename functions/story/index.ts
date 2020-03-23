@@ -2,13 +2,10 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import StatusService from '../../services/StatusService';
 
-
-
 const getStory: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-
-    console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
+    // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;
     const alias = data["alias"];
 

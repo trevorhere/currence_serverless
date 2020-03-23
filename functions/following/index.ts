@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-const UserService =require('../../services/UserService');
+import UserService from '../../services/UserService';
 
 const middy = require('middy');
 const { auth } = require('../auth/auth');
@@ -9,7 +9,7 @@ const { auth } = require('../auth/auth');
 const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    // console.log('event: ', event);
+     console.log('event: ', event);
 
     console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;

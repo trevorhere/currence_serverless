@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 const { getUser } = require('../data/User');
 
-class AuthService {
+export default class AuthService {
     authenticateUser = async(alias: string, password: string): Promise<boolean> => {
 
         const getUserPromise = getUser(alias);
@@ -39,5 +39,3 @@ class AuthService {
         return comparison; // true if match, false if no match
     }
 }
-
-module.exports = AuthService

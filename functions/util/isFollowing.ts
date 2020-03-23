@@ -6,7 +6,8 @@ import UtilService from '../../services/UtilService'
 export const isFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
+
+    // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;
     const alias = data["alias"];
     const followeeAlias = data["followeeAlias"];

@@ -1,7 +1,7 @@
 const { getUser, createUser, updateUserFollowing, updateUserFollowers } = require('../data/User');
 import { User } from '../models';
 
-class UserService {
+export default class UserService {
     getUser = async(alias: string): Promise< User | null> => {
         const userPromise = getUser(alias);
         const user: User = await userPromise;
@@ -13,7 +13,7 @@ class UserService {
         return await userPromise;
     }
 
-    getFollowers = async(alias: string) => {
+    getFollowers = async(alias: string): Promise<User[] | string[] | null> => {
 
         const getUserPromise = this.getUser(alias);
         const user = await getUserPromise;
@@ -71,5 +71,3 @@ class UserService {
         return user;
     }
 }
-
-module.exports = UserService

@@ -4,12 +4,14 @@ const jwt = require('jsonwebtoken');
 const secret = process.env.TOKEN_SECRET;
 import { User } from '../../models/User'
 
-const AuthService = require('../../services/AuthService');
-const UserService = require('../../services/UserService');
-
+import UserService from '../../services/UserService';
+import AuthService from '../../services/AuthService';
 
 export const signup: APIGatewayProxyHandler = async (event, _context) => {
     try {  
+
+
+   // console.log('event: ', event);
 
     const data = JSON.parse(event.body); 
     const alias = data["alias"];
@@ -17,9 +19,9 @@ export const signup: APIGatewayProxyHandler = async (event, _context) => {
     const picture = data["picture"];
 
 
-    console.log('INPUT DATA:  ', data);
-    console.log('ALIAS:  ', alias);
-    console.log('PASSWORD:  ', password);
+    // console.log('INPUT DATA:  ', data);
+    // console.log('ALIAS:  ', alias);
+    // console.log('PASSWORD:  ', password);
 
     if(!password || !alias){
         throw new Error("[400] Bad input data")
@@ -31,6 +33,7 @@ export const signup: APIGatewayProxyHandler = async (event, _context) => {
     const userService = new UserService();
     const createUserPromise = userService.createUser(user);
     const newUser = await createUserPromise;
+    newUser;
 
     const body =
     {
