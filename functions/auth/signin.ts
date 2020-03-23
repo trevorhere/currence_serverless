@@ -7,15 +7,15 @@ const secret = process.env.TOKEN_SECRET;
 const signin: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    console.log('copy me: ', event);
+    // console.log('copy me: ', event);
 
     const data = JSON.parse(event.body); 
     const alias = data["alias"];
     const password = data["password"];
 
-    console.log('INPUT DATA:  ', data);
-    console.log('ALIAS:  ', alias);
-    console.log('PASSWORD:  ', password);
+    // console.log('INPUT DATA:  ', data);
+    // console.log('ALIAS:  ', alias);
+    // console.log('PASSWORD:  ', password);
 
     if(!password || !alias){
         throw new Error("[400] Bad input data")
@@ -29,7 +29,7 @@ const signin: APIGatewayProxyHandler = async (event, _context) => {
     //     // expiresIn: '1h'
     // }))
 
-    console.log("Authenticated: ", authenticated);
+    // console.log("Authenticated: ", authenticated);
 
     const body = authenticated ? 
     {

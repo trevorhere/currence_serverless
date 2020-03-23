@@ -7,7 +7,7 @@ export default class AuthService {
 
         const getUserPromise = getUser(alias);
         const user = await getUserPromise;
-        console.log('auth service signin: ', user);
+        // console.log('auth service signin: ', user);
         const authenticated = await this.compareHash(password, user["password"]);
         return authenticated;
     }
