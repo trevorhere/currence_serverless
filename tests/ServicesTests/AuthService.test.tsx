@@ -18,9 +18,9 @@ it("Generates a hash", async () => {
     const auth = new AuthService();
     const hash = await auth.generateHash("x");
     expect(hash).toBeDefined
-} catch(e){
-    console.log(e)
-}
+    } catch(e){
+        console.log(e)
+    }
 })
 
 it("Compares a hash", async () => {

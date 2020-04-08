@@ -19,7 +19,7 @@ const signup: APIGatewayProxyHandler = async (event, _context) => {
     const picture = data["picture"];
 
 
-    // console.log('INPUT DATA:  ', data);
+    console.log('INPUT DATA:  ', data);
     // console.log('ALIAS:  ', alias);
     // console.log('PASSWORD:  ', password);
 

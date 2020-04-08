@@ -11,10 +11,10 @@ const createStatus: APIGatewayProxyHandler = async (event, _context) => {
        // console.log('event: ', event);
 
     const data = JSON.parse(event.body);
-    // console.log('INPUT DATA:  ', data);
+    console.log('INPUT DATA:  ', data);
     const alias = data["alias"];
     const message = data["message"];
-   //  console.log('INPUT MESSAGE:  ', message);
+    console.log('INPUT MESSAGE:  ', message);
 
 
     if(!alias || !message){ 
@@ -54,5 +54,7 @@ const createStatus: APIGatewayProxyHandler = async (event, _context) => {
     }
 }
 
+
+// export { createStatus }
 
 exports.createStatus = middy(createStatus).use(auth());

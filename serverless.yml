@@ -25,8 +25,14 @@ provider:
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     TOKEN_SECRET: PragueOkaikweiTeriPetrolulAwful
-    CURRENCE_USERS_TABLE: CURRENCE_USERS_TABLE # ${self:service}-${opt:stage, self:provider.stage}
-    CURRENCE_STATUSES_TABLE: CURRENCE_STATUSES_TABLE # ${self:service}-${opt:stage, self:provider.stage}
+    SQS_URL: https://sqs.us-east-1.amazonaws.com/454900433813/FeedUpdateQueue
+    CURRENCE_USERS_TABLE: CURRENCE_USERS # ${self:service}-${opt:stage, self:provider.stage}
+    CURRENCE_STATUSES_TABLE: CURRENCE_STATUSES # ${self:service}-${opt:stage, self:provider.stage}
+    CURRENCE_FEEDS_TABLE: CURRENCE_FEEDS # ${self:service}-${opt:stage, self:provider.stage}
+    CURRENCE_STORIES_TABLE: CURRENCE_STORIES
+    CURRENCE_FOLLOWS_TABLE: CURRENCE_FOLLOWS
+    FEED_UPDATE_QUEUE: FeedUpdateQueue
+
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -50,9 +56,43 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_STATUSES_TABLE}"
-
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchGet
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_FEEDS_TABLE}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchGet
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_FOLLOWS_TABLE}"
+    - Effect: Allow
+      Action:
+        - sqs:DeleteMessage
+        - sqs:ReceiveMessage
+        - sqs:SendMessage
+      Resource: "arn:aws:sqs:${self:provider.region}:454900433813:${self:provider.environment.FEED_UPDATE_QUEUE}"
 
 functions:
+  recieveStatus:
+    handler: ./services/SQS.recieveStatus
+    events:
+      - sqs: 	
+          arn: "arn:aws:sqs:${self:provider.region}:454900433813:${self:provider.environment.FEED_UPDATE_QUEUE}"
+          batchSize: 1
+
   signin:
     handler: ./functions/auth/signin.signin
     description: Signs a user into the app
@@ -159,7 +199,7 @@ functions:
     events:
       - http:
           method: post
-          cors: true # <-- CORS!
+          cors: true # <-- CORS!5
           path: status
           request:
             passThrough: WHEN_NO_TEMPLATES

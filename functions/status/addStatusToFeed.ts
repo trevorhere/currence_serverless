@@ -1,23 +1,13 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import UserService from '../../services/UserService';
 
-export const getUser: APIGatewayProxyHandler = async (event, _context) => {
+export const addStatusToFeed: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
-    const data = event.queryStringParameters;
-    const alias = data["alias"];
+    console.log('test function hit');
 
-    if(!alias){ 
-        throw new Error("[400] Bad input data")
-    }
-
-    const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const user = await getUserPromise;
-
-    console.log('user: ', user);
+    console.log('INPUT QUERY PARAMS:  ', event);
+    
 
     return {
         statusCode: 200,
@@ -26,7 +16,7 @@ export const getUser: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-            user
+            result: "success"
         }),
     };
 

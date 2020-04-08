@@ -18,26 +18,8 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const user = await getUserPromise;
-    const followersAliases = [...user.followers];
-
-
-    const userLookup = async (alias:string) => {
-        return await userService.getUser(alias);
-    }
-
-    const buildFollowers = async () => {
-        return Promise.all( followersAliases.map( a => userLookup(a)));
-    }
-
-    let followers = await buildFollowers().then(f => {
-        // console.log('followers: ', f);
-        return [...f];
-    })
-
-    // console.log('followers: ', followers);
-    // console.log('user: ', user);
+    const getFollowersPromise = userService.getFollowers(alias);
+    const followers = await getFollowersPromise;
 
 
     return {
@@ -47,8 +29,7 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-            user,
-            followers
+            followers: [...followers]
         }),
     };
 

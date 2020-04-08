@@ -2,11 +2,13 @@ export class Status {
     id: string;
     alias: string;
     message: string;
+    image: string;
 
-    constructor(id:string, alias:string, message: string){
+    constructor(id:string, alias:string, message: string, image: string){
         this.id = id;
         this.alias = alias  
         this.message = message;
+        this.image = image
     }
     
     getID(){

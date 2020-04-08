@@ -1,14 +1,15 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
-import StatusService from '../../services/StatusService';
+import FeedService from '../../services/FeedService';
 
 const middy = require('middy');
 const { auth } = require('../auth/auth');
 
 
 const getFeed: APIGatewayProxyHandler = async (event, _context) => {
-    try {  
-
+    try { 
+      
+      
       // console.log('event: ', event);
       // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
       const data = event.queryStringParameters;
@@ -19,8 +20,8 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
         throw new Error("[400] Bad input data")
     }
 
-    const statusService = new StatusService();
-    const feed = await statusService.buildFeed(alias, count);
+    const feedService = new FeedService();
+    const feed = await feedService.buildFeed(alias);
 
     return {
         statusCode: 200,

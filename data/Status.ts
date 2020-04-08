@@ -55,6 +55,9 @@ const getStatuses = async (statuses: string[], alias: string): Promise<string[]>
 }
 
 const createStatus = async (status: Status): Promise<{}>  => {
+    console.log('status: ', status);
+    console.log('any log');
+
     try {
 
         const timestamp = new Date().getTime();
@@ -62,7 +65,7 @@ const createStatus = async (status: Status): Promise<{}>  => {
             TableName: process.env.CURRENCE_STATUSES_TABLE,
             Item: {
                 id: status.id,
-                alias: status.alias,
+                authorAlias: status.alias,
                 message: status.message,
                 createdAt: timestamp,
                 updatedAt: timestamp,
@@ -72,7 +75,7 @@ const createStatus = async (status: Status): Promise<{}>  => {
 
         const data = async () => {
             let status = await dynamoDb.put(params).promise();
-            status;
+            console.log('status: ', status );
             return params.Item;
         } 
 

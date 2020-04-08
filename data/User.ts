@@ -4,6 +4,8 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 import { User, Status } from '../models'
 
 const getUser = async (alias: string): Promise<{}>  => {
+    
+    console.log('getUser alias: ', alias)
     try {
 
         const params = {
@@ -81,7 +83,6 @@ const getUsers = async (aliases: string[]): Promise<string[]>  => {
         throw new Error(err.message);
     }
 }
-
 
 
 const updateUserStatuses = async (alias: string, statuses: Status[]): Promise<{}>  => {
@@ -173,6 +174,9 @@ const updateUserFollowing = async (alias: string, following: []): Promise<{}>  =
         }
     });
 }
+
+
+
 
 export {
     getUser,

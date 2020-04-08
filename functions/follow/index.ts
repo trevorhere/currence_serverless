@@ -37,7 +37,7 @@ const follow: APIGatewayProxyHandler = async (event, _context) => {
 
 
     } catch(error){
-    console.log('FEED::ERROR: ', error.message);
+    console.log('FOLLOW::ERROR: ', error.message);
     return {
       statusCode:(error.message.includes("400"))? 400 : 500,
       headers: {

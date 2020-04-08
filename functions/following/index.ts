@@ -9,9 +9,6 @@ const { auth } = require('../auth/auth');
 const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    // console.log('event: ', event);
-
-    // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;
     const alias = data["alias"];
 
@@ -20,26 +17,8 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const userService = new UserService();
-    const getUserPromise = userService.getUser(alias);
-    const user = await getUserPromise;
-    const followingAliases = [...user.following];
-
-
-    const userLookup = async (alias:string) => {
-        return await userService.getUser(alias);
-    }
-
-    const buildFollowing = async () => {
-        return Promise.all( followingAliases.map( a => userLookup(a)));
-    }
-
-    let following = await buildFollowing().then(f => {
-        return [...f];
-    })
-
-    // console.log('following: ', following);
-    // console.log('user: ', user);
-
+    const getFollowingPromise = userService.getFollowing(alias);
+    const following = await getFollowingPromise;
 
     return {
         statusCode: 200,
@@ -48,14 +27,13 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-            user,
             following
         }),
     };
 
 
     } catch(error){
-        console.log('FEED::ERROR: ', error.message);
+        console.log('FOLLOWING::ERROR: ', error.message);
         return {
             statusCode:(error.message.includes("400"))? 400 : 500,
             headers: {
