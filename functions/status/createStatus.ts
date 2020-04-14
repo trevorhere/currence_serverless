@@ -23,6 +23,7 @@ const createStatus: APIGatewayProxyHandler = async (event, _context) => {
 
     const statusService = new StatusService();
     const status = await statusService.createStatus(alias, message);
+    status;
 
 
     return {
@@ -33,7 +34,6 @@ const createStatus: APIGatewayProxyHandler = async (event, _context) => {
         },
         body: JSON.stringify({
             message: "status successfully created",
-            status
         }),
     };
 

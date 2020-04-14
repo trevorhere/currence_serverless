@@ -2,7 +2,8 @@ const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 import { User, Status } from '../models'
-const TableName =  process.env.CURRENCE_FEEDS_TABLE || "CURRENCT_FEEDS_TABLE"
+import { RSA_NO_PADDING } from 'constants';
+const TableName =  process.env.CURRENCE_FEEDS_TABLE || "CURRENCE_FEEDS_TABLE"
 
 const getFeed = async (alias: string): Promise<string[]>  => {
 
@@ -28,31 +29,86 @@ const getFeed = async (alias: string): Promise<string[]>  => {
 }
 
 const addStatusToFeed = async ( ownerAlias: string, status: Status ): Promise<{}>  => {
-    const timestamp = new Date().getTime();
-    const params = {
-        TableName,
-        Item: {
-            id: uuid.v1(),
-            ownerAlias,
-            statusId: status.id,
-            message: status.message,
-            alias: status.alias, 
-            picture: status.image,
-            createdAt: timestamp,
-            updatedAt: timestamp,
-        },
-    };
+    try{
+        const timestamp = new Date().getTime();
+        const params = {
+            TableName,
+            Item: {
+                id: uuid.v1(),
+                ownerAlias,
+                statusId: status.id,
+                message: status.message,
+                alias: status.alias, 
+                picture: status.image,
+                createdAt: timestamp,
+                updatedAt: timestamp,
+            },
+        };
 
-    return await dynamoDb.put(params, (error) => {
-        // handle potential errors
-        if (error) {
-            console.error(error);
-            throw new Error('Couldn\'t create the user.');
-        } else {
-            return params.Item
-        }
-    });
+        const data = async () => {
+            let res = await dynamoDb.put(params).promise();
+            res;
+            return params.Item;
+        } 
+
+        const response = await data();
+        return response;
+
+
+    } catch (err) {
+        console.log('ERROR::Data::Feed.addStatusToFeed', err.message);
+        throw new Error(err.message);
+    }
+
 }
+
+const addBulkStatusToFeed = async ( ownerAliases: string[], status: Status ): Promise<{}>  => {
+    try{
+        console.log('doing bulk write: ', ownerAliases.length);
+        const timestamp = new Date().getTime();
+
+        const statuses = [];
+        ownerAliases.forEach( ownerAlias => {
+            statuses.push({
+                PutRequest: {
+                    Item: {
+                        id: uuid.v1(),
+                        ownerAlias,
+                        statusId: status.id,
+                        message: status.message,
+                        alias: status.alias, 
+                        picture: status.image,
+                        createdAt: timestamp,
+                        updatedAt: timestamp,
+                    },
+                }
+            })
+        })
+
+        const params = {
+            RequestItems: {
+                'CURRENCE_FEEDS': statuses
+            }
+        };
+
+        const data = async () => {
+            let res = await dynamoDb.batchWrite(params).promise();
+            console.log('batchWrite:', res);
+            return res;
+        } 
+
+        const response = await data();
+        console.log('response: ', response)
+        return response;
+
+
+    } catch (err) {
+        console.log('ERROR::Data::Feed.addBulkStatusToFeed', err.message);
+        throw new Error(err.message);
+    }
+
+}
+
 
 // const getUsers = async (aliases: string[]): Promise<string[]>  => {
 
@@ -176,7 +232,8 @@ const addStatusToFeed = async ( ownerAlias: string, status: Status ): Promise<{}
 
 export {
     getFeed,
-    addStatusToFeed
+    addStatusToFeed,
+    addBulkStatusToFeed
     // createFeed,
     // updateUserStatuses,
     // updateUserFollowers,

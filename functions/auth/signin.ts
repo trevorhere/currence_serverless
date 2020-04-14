@@ -13,7 +13,7 @@ const signin: APIGatewayProxyHandler = async (event, _context) => {
     const alias = data["alias"];
     const password = data["password"];
 
-    // console.log('INPUT DATA:  ', data);
+    console.log('INPUT DATA:  ', data);
     // console.log('ALIAS:  ', alias);
     // console.log('PASSWORD:  ', password);
 

@@ -1,5 +1,5 @@
 const { getUser, createUser, updateUserFollowing, updateUserFollowers } = require('../data/User');
-const { createFeed } = require('../data/Feed');
+const { imageUploader } = require('./S3')
 const { addFollow, getFollowers, getFollowing } = require('../data/Follow');
 
 import { User } from '../models';
@@ -13,8 +13,17 @@ export default class UserService {
 
     createUser = async (user: User): Promise< User | null> => {
         
+
+        // let s3ImageURL = await imageUploader(user.picture);
+        // console.log('url: ', s3ImageURL);
+
+        // user.picture = s3ImageURL;
+        // console.log('user.pic', user.picture);
+
         const userPromise = createUser(user);
-        return await userPromise;
+
+        let savedUser = await userPromise;
+        return savedUser;
 
     }
 

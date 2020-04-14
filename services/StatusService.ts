@@ -2,7 +2,6 @@
 const { getUser } = require('../data/User');
 
 const { addStatusToStory, getStory } = require('../data/Story');
-const { getFollowers } = require('../data/Follow');
 
 const { updateFeed } = require('./SQS');
 const uuid = require('uuid');
@@ -17,21 +16,9 @@ export default class StatusService {
         const addStatusPromise = addStatusToStory(status)
         const addedStatus = await addStatusPromise;
 
-        let followers = await getFollowers(alias); 
-        console.log('followers: ', followers);
-        updateFeed( status, followers )
+        updateFeed( status, alias )
 
-
-
-        // update feeds
-        
-
-        
-        // console.log('addedStatus: ', addedStatus)
-        // const statuses = [...user.statuses]
-
-        // statuses.push(status.id);
-        // updateUserStatuses(status.alias, statuses)
+        console.log('addedStatus');
         return addedStatus;
     }
 
@@ -47,61 +34,4 @@ export default class StatusService {
         
         return story.sort(compare)
     }
-
-
-    buildFeed = async(alias: string, count: number): Promise <any[] | null> => {
-        // const user = await getUser(alias);
-
-        // let compare = (a,b) => {
-        //     let dateA = a.createdAt;
-        //     let dateB = b.createdAt;
-        //     return dateA >= dateB ? -1 : 1
-        // }
-
-
-        // if(!user?.following.length){
-        //     const statuses = await getStatuses([...user.statuses], alias);
-        //     statuses.map(status => {
-        //         status['picture'] = user.picture
-        //     })
-        //     return statuses.sort(compare).slice(0,count)
-        // }
-
-
-        // const following = await getUsers(user.following);
-        
-        // // console.log('user in build feed: ' , user);
-        // // console.log('following in build feed: ' , following);
-
-        // let feed = [];
-        // const buildFeedFollowers = async () => {
-        //     return Promise.all(
-        //         following.map( async followee => {
-        //             const statuses = await getStatuses([...followee.statuses], followee.alias);
-        //             // console.log('statuses: ', ...statuses);
-        //             statuses.map(status => {
-        //                 status['picture'] = followee.picture
-        //                 feed.push(status);
-        //             })
-        //             return [...statuses];
-        //     })
-        //     ).catch(e => {
-        //         console.log('promise error:', e.message);
-        //     })
-        // }
-
-        // await buildFeedFollowers()
-
-        // const statuses = await getStatuses([...user.statuses], alias);
-        // statuses.map(status => {
-        //     status['picture'] = user.picture
-        // })
-
-        // let result = statuses.concat(feed).sort(compare).slice(0,count);
-
-        //console.log('result: ', result);
-        // console.log('res: ', result)
-        return await null; //  result
-    }
-
 }

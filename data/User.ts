@@ -3,13 +3,15 @@ const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 import { User, Status } from '../models'
 
+const TableName = process.env.CURRENCE_USERS_TABLE || "CURRENCT_USERS_TABLE"
+
 const getUser = async (alias: string): Promise<{}>  => {
     
     console.log('getUser alias: ', alias)
     try {
 
         const params = {
-            TableName: process.env.CURRENCE_USERS_TABLE || "CURRENCT_USERS_TABLE",
+            TableName,
             Key: {
                 alias
             },
@@ -30,32 +32,37 @@ const getUser = async (alias: string): Promise<{}>  => {
 }
 
 const createUser = async (user: User): Promise<{}>  => {
-    const timestamp = new Date().getTime();
-    const params = {
-        TableName: process.env.CURRENCE_USERS_TABLE,
-        Item: {
-            id: uuid.v1(),
-            alias: user.alias,
-            password: user.password,
-            picture: user.picture,
-            followers:[],
-            following:[],
-            statuses:[],
-            feed:[],
-            createdAt: timestamp,
-            updatedAt: timestamp,
-        },
-    };
+    console.log('start createUser');
+    try {
+        const timestamp = new Date().getTime();
+        const params = {
+            TableName,
+            Item: {
+                id: uuid.v1(),
+                alias: user.alias,
+                password: user.password,
+                picture: user.picture,
+                followers:[],
+                following:[],
+                statuses:[],
+                feed:[],
+                createdAt: timestamp,
+                updatedAt: timestamp,
+            },
+        };
 
-    return await dynamoDb.put(params, (error) => {
-        // handle potential errors
-        if (error) {
-            console.error(error);
-            throw new Error('Couldn\'t create the user.');
-        } else {
+        const data = async () => {
+            let user = await dynamoDb.put(params).promise();
+            console.log('create user: ', user)
             return params.Item
         }
-    });
+
+        return await data();
+
+    } catch (err) {
+        console.log('ERROR::DATA::User.createUser ', err.message);
+        throw new Error(err.message);
+    }
 }
 
 const getUsers = async (aliases: string[]): Promise<string[]>  => {

@@ -3,6 +3,7 @@ import 'source-map-support/register';
 const jwt = require('jsonwebtoken');
 const secret = process.env.TOKEN_SECRET;
 import { User } from '../../models/User'
+import { imageUploader } from '../../services/S3'
 
 import UserService from '../../services/UserService';
 import AuthService from '../../services/AuthService';
@@ -19,9 +20,8 @@ const signup: APIGatewayProxyHandler = async (event, _context) => {
     const picture = data["picture"];
 
 
-    console.log('INPUT DATA:  ', data);
+    // console.log('INPUT DATA:  ', data);
     // console.log('ALIAS:  ', alias);
-    // console.log('PASSWORD:  ', password);
 
     if(!password || !alias){
         throw new Error("[400] Bad input data")
@@ -33,7 +33,10 @@ const signup: APIGatewayProxyHandler = async (event, _context) => {
     const userService = new UserService();
     const createUserPromise = userService.createUser(user);
     const newUser = await createUserPromise;
+    console.log('newUser: ', newUser);
     newUser;
+    imageUploader(picture, alias);
+
 
     const body =
     {

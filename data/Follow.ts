@@ -2,6 +2,7 @@ const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 import { User, Status } from '../models'
+import { start } from 'repl';
 const TableName =  process.env.CURRENCE_FOLLOWS_TABLE || "CURRENCT_FOLLOWS_TABLE"
 
 // const getStory = async ( alias: string ): Promise<{}>  => {
@@ -72,6 +73,33 @@ const getFollowers = async (alias: string): Promise<string[]>  => {
         console.log('getFollowers: ', response);
         return response.Items;
         
+
+    } catch (error) {
+        console.log('ERROR::Data::Followers.getFollowers', error.message);
+        throw new Error(error.message);
+    }
+}
+
+const getFollowersWithLimit = async (alias: string, limit: number, startKey: string | null)  => {
+
+    const params: any = {
+        TableName,
+        KeyConditionExpression: 'followeeAlias = :followeeAlias',
+        ExpressionAttributeValues: { ':followeeAlias': alias},
+        Limit: limit
+    }
+
+    if(startKey){ 
+        params.ExclusiveStartKey = startKey;
+    }
+
+    try {
+
+            const data = await dynamoDb.query(params).promise();
+            return {
+                data: data.Items, 
+                key: data.LastEvaluatedKey
+            }
 
     } catch (error) {
         console.log('ERROR::Data::Followers.getFollowers', error.message);
@@ -201,7 +229,8 @@ const getFollowing = async (alias: string): Promise<string[]>  => {
 export {
     getFollowers,
     getFollowing,
-    addFollow
+    addFollow,
+    getFollowersWithLimit
     // addStatusToStory
     // updateUserStatuses,
     // updateUserFollowers,
