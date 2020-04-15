@@ -1,11 +1,10 @@
 const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-import { User, Status } from '../models'
-import { RSA_NO_PADDING } from 'constants';
+import { Status } from '../models'
 const TableName =  process.env.CURRENCE_FEEDS_TABLE || "CURRENCE_FEEDS_TABLE"
 
-const getFeed = async (alias: string): Promise<string[]>  => {
+const getFeed = async (alias: string ): Promise<string[]>  => {
 
     const params = {
         TableName,
@@ -25,6 +24,36 @@ const getFeed = async (alias: string): Promise<string[]>  => {
     } catch (err) {
         console.log('ERROR::Data::Feed.getFeed', err.message);
         throw new Error(err.message);
+    }
+}
+
+
+const getFeedWithLimit = async (alias: string, key:  string | null)  => {
+
+
+    const params: any = {
+        TableName,
+        KeyConditionExpression: 'ownerAlias = :alias',
+        ExpressionAttributeValues: { ':alias': alias},
+        Limit: 10
+    }
+
+    if(key){ 
+        console.log('adding key')
+        console.log('key: ', key)
+        params.ExclusiveStartKey = key;
+    }
+
+    try {
+        const data = await dynamoDb.query(params).promise();
+        return {
+            data: data.Items, 
+            key: data.LastEvaluatedKey
+        }
+
+    } catch (error) {
+        console.log('ERROR::Data::FEED.getFeedWithLimit', error.message);
+        throw new Error(error.message);
     }
 }
 
@@ -233,7 +262,8 @@ const addBulkStatusToFeed = async ( ownerAliases: string[], status: Status ): Pr
 export {
     getFeed,
     addStatusToFeed,
-    addBulkStatusToFeed
+    addBulkStatusToFeed,
+    getFeedWithLimit
     // createFeed,
     // updateUserStatuses,
     // updateUserFollowers,

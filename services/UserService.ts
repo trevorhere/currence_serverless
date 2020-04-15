@@ -1,6 +1,6 @@
 const { getUser, createUser, updateUserFollowing, updateUserFollowers } = require('../data/User');
 const { imageUploader } = require('./S3')
-const { addFollow, getFollowers, getFollowing } = require('../data/Follow');
+const { addFollow, getFollowers, getFollowing, getFollowingWithLimit, removeFollow } = require('../data/Follow');
 
 import { User } from '../models';
 
@@ -8,56 +8,57 @@ export default class UserService {
     getUser = async(alias: string): Promise< User | null> => {
         const userPromise = getUser(alias);
         const user: User = await userPromise;
+        console.log('user fetched: ', user)
         return user;
     }
 
     createUser = async (user: User): Promise< User | null> => {
-        
-
-        // let s3ImageURL = await imageUploader(user.picture);
-        // console.log('url: ', s3ImageURL);
-
-        // user.picture = s3ImageURL;
-        // console.log('user.pic', user.picture);
-
+        console.log('savedUser: ', user)
         const userPromise = createUser(user);
-
         let savedUser = await userPromise;
         return savedUser;
-
     }
 
-    getFollowers = async(alias: string): Promise<User[] | string[] | null> => {
+    getFollowers = async(alias: string, key: string ): Promise<any | string[] | null> => {
 
-        const getFollowersPromise = getFollowers(alias);
-        const followers = await getFollowersPromise;
+        const getFollowersPromise = getFollowers(alias, key);
+        const res = await getFollowersPromise;
 
-        return followers;
+        return { 
+            followers: res.followers,
+            key: res.key
+        }
     }
 
+    getFollowing = async(alias: string, key: string): Promise< any | string[] | null> => {
 
-    getFollowing = async(alias: string): Promise<User[] | string[] | null> => {
+        const getFollowingPromise = getFollowingWithLimit(alias, key);
+        const res = await getFollowingPromise;
+        console.log('res in get following: ', res)
 
-        const getFollowingPromise = getFollowing(alias);
-        const following = await getFollowingPromise;
-
-        return following;
+        return { 
+            following: res.following,
+            key: res.key
+        }
     }
 
     unfollow = async (userAlias: string, followeeAlias:string): Promise< User | null> => {
-        const getUserPromise = getUser(userAlias);
-        const getFolloweePromise = getUser(followeeAlias);
+        // const getUserPromise = getUser(userAlias);
+        // const getFolloweePromise = getUser(followeeAlias);
+
+        const removeFollowPromise = removeFollow(userAlias, followeeAlias)
+        const removeFollowRes = await removeFollowPromise;
         
-        const user = await getUserPromise;
-        const followee = await getFolloweePromise;
+        // const user = await getUserPromise;
+        // const followee = await getFolloweePromise;
 
-        let following = [...user.following.filter(f => f !==  followeeAlias)]
-        let followers = [...followee.followers.filter(f => f !==  userAlias)]
+        // let following = [...user.following.filter(f => f !==  followeeAlias)]
+        // let followers = [...followee.followers.filter(f => f !==  userAlias)]
 
-        await updateUserFollowing(user.alias, following)
-        await updateUserFollowers(followeeAlias, followers)
+        // await updateUserFollowing(user.alias, following)
+        // await updateUserFollowers(followeeAlias, followers)
 
-        return user;
+        return removeFollowRes;
     }
 
     follow = async (userAlias: string, followeeAlias: string ): Promise< User | null> => {

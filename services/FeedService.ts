@@ -1,13 +1,16 @@
-
-
-const { getFeed } = require('../data/Feed');
+const { getFeedWithLimit } = require('../data/Feed');
+const { getUser } = require('../data/User');
 
 export default class FeedSevice {
 
 
-    buildFeed = async(alias: string): Promise < any[] | null> => {
-        const getFeedPromise = getFeed(alias);
-        const feed = await getFeedPromise;
+    buildFeed = async(alias: string, key: {}): Promise < any | null> => {
+        const getFeedPromise = getFeedWithLimit(alias, key);
+        const res = await getFeedPromise;
+        let feed = res.data;
+        let newKey = res.key;
+
+        let user = await getUser(alias);
 
         let compare = (a,b) => {
             let dateA = a.createdAt;
@@ -15,7 +18,11 @@ export default class FeedSevice {
             return dateA >= dateB ? -1 : 1
         }
         
-        return feed.sort(compare)
+        return {
+        feed: feed.sort(compare),
+        key: newKey,
+        user
+        }
     }
 
 }

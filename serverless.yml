@@ -29,7 +29,7 @@ provider:
     CURRENCE_STATUSES_TABLE: CURRENCE_STATUSES # ${self:service}-${opt:stage, self:provider.stage}
     CURRENCE_FEEDS_TABLE: CURRENCE_FEEDS # ${self:service}-${opt:stage, self:provider.stage}
     CURRENCE_STORIES_TABLE: CURRENCE_STORIES
-    CURRENCE_FOLLOWS_TABLE: CURRENCE_FOLLOWS
+    CURRENCE_FOLLOWS_TABLE: CURRENCE_FOLLOWS__TEST_2
     FEED_UPDATE_QUEUE: FeedUpdateQueue
     FETCH_FOLLOWERS_QUEUE: FetchFollowersQueue
     SQS_URL_UPDATE_FEED: "https://sqs.us-east-1.amazonaws.com/454900433813/FeedUpdateQueue"
@@ -98,6 +98,11 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.CURRENCE_FOLLOWS_TABLE}"
     - Effect: Allow
       Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CURRENCE_FOLLOWS_TABLE }/index/*"
+    - Effect: Allow
+      Action:
         - sqs:DeleteMessage
         - sqs:ReceiveMessage
         - sqs:SendMessage
@@ -143,13 +148,23 @@ functions:
           request:
             passThrough: WHEN_NO_TEMPLATES
   getFeed:
-    handler: ./functions/feed/index.getFeed
+    handler: ./functions/feed/getFeed.getFeed
     description: Gets feed of a user
     events:
       - http:
           method: get
           cors: true # <-- CORS!
           path: feed
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+  getFeedPage:
+    handler: ./functions/feed/getFeedPage.getFeedPage
+    description: Gets feed page of a user
+    events:
+      - http:
+          method: get
+          cors: true # <-- CORS!
+          path: feed_page
           request:
             passThrough: WHEN_NO_TEMPLATES
   getStory:

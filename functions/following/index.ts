@@ -11,14 +11,22 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
 
     const data = event.queryStringParameters;
     const alias = data["alias"];
+    const keyString = data["key"]
+    let key = null;
+    if(keyString){
+      key = JSON.parse(keyString)
+    }
+
 
     if(!alias){ 
         throw new Error("[400] Bad input data")
     }
 
     const userService = new UserService();
-    const getFollowingPromise = userService.getFollowing(alias);
-    const following = await getFollowingPromise;
+    const getFollowingPromise = userService.getFollowing(alias, key);
+    const res = await getFollowingPromise;
+    console.log('res in index service', res);
+
 
     return {
         statusCode: 200,
@@ -27,7 +35,8 @@ const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-            following
+            following: res.following,
+            key: res.key
         }),
     };
 

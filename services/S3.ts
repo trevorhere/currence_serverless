@@ -1,29 +1,35 @@
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
-
-const moment = require('moment')
-const sha1 = require('sha1')
-const unixTime = require('unix-time');
-const FileType = require('file-type');
 const Bucket = "currence-profile-images";
 
-
-
-const imageUploader =  async ( image: string, alias: string ) => {
-
+const imageUploader =  async ( image: string, alias: string ): Promise<string> => {
     try {
-    const buffer = new Buffer(image.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+
+    const base64 = image.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = new Buffer(base64, "base64");
+    const type = image.split(';')[0].split('/')[1];
+    // console.log('type: \n', type);
+    // console.log('buffer: \n', buffer);
+    // console.log('base64: \n', base64);
+    // console.log('image: \n\n', image);
+
+
+
+
+
     var params = {
         Bucket,
-        Key: alias, 
+        Key: `${alias}.${type}`, 
         Body: buffer,
         ContentEncoding: 'base64',
-        ContentType: 'image/jpeg'
+        ACL: 'public-read',
+        ContentType: `image/${type}`
       };
+
 
     const data = async () => {
         let url = await s3.putObject(params).promise();
-        return url;
+        return `https://currence-profile-images.s3.amazonaws.com/${alias}.${type}`;
     }
 
     return await data();
@@ -31,35 +37,6 @@ const imageUploader =  async ( image: string, alias: string ) => {
     console.log('ERROR::S3.imageUploader: ', error.message)
 }
     
-}
-
-const getFileInfo = ( file, buffer ) => {
-    let ext = file.ext;
-    let hash = sha1(new Buffer(new Date().toString()))
-    let now =  moment().format('YYYY-MM-DD HH:MM:SS')
-
-    let path = hash + '/';
-    let name = unixTime(now) + '.' + ext
-    let fullName = path + name
-    let fullPath = Bucket + fullName;
-
-    let params = {
-        Bucket,
-        Key: fullName + ext,
-        Body: buffer
-    }
-
-    let upload = {
-        size: buffer.toString('ascii').length,
-        type: file.mime,
-        name: fullName,
-        full_path: fullPath
-    }
-
-    return {
-        'params': params,
-        'uploadFile': upload
-    }
 }
 
 export {

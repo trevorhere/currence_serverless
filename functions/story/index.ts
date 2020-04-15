@@ -8,13 +8,44 @@ const getStory: APIGatewayProxyHandler = async (event, _context) => {
     // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;
     const alias = data["alias"];
+    const keyJSON = data["key"];
+    let key = null;
+
+    console.log("keyJson: ",keyJSON)
+    console.log("keyJson type : ",typeof(keyJSON))
+
+    if(keyJSON == "undefined"){
+
+    return {
+      statusCode: 200,
+      headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+      },
+      body: JSON.stringify({
+          story: [],
+          user: null,
+          key: undefined
+        }),
+  };
+
+    }
+
+  if(keyJSON !== "undefined" && keyJSON){
+
+      key = JSON.parse(keyJSON);
+    }
+
+    console.log('key: ', key)
+
 
     if(!alias){ 
         throw new Error("[400] Bad input data")
     }
 
     const statusService = new StatusService();
-    const story = await statusService.buildStory(alias);
+    const res  = await statusService.buildStory(alias, key);
+    // console.log('res: ', res);
 
     return {
         statusCode: 200,
@@ -23,7 +54,9 @@ const getStory: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-          story
+          story: res.story,
+          key: res.key,
+          user: res.user
           }),
     };
 

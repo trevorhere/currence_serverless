@@ -26,16 +26,21 @@ const signup: APIGatewayProxyHandler = async (event, _context) => {
     if(!password || !alias){
         throw new Error("[400] Bad input data")
     }
+    
+    let s3Url = await imageUploader(picture, alias);
+    // console.log('s3:  ', s3Url);
+
+
 
     const auth = new AuthService();
     const passwordHash = await auth.generateHash(password);
-    const user = new User(alias, passwordHash, picture);
+    const user = new User(alias, passwordHash, s3Url);
     const userService = new UserService();
     const createUserPromise = userService.createUser(user);
     const newUser = await createUserPromise;
     console.log('newUser: ', newUser);
     newUser;
-    imageUploader(picture, alias);
+
 
 
     const body =

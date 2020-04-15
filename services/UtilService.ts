@@ -1,12 +1,12 @@
-const { getUser } = require('../data/User');
-import { User } from '../models';
+import { getFollowing } from '../data/Follow' 
 
 export default class  UtilService {
 
-    isFollowing = async (userAlias: string, followeeAlias: string): Promise< Boolean | null> => {
-        const userPromise = getUser(userAlias);
-        const user: User = await userPromise;
-        return await user.following.includes(followeeAlias) ? true : false
+    isFollowing = async (followerAlias: string, followeeAlias: string): Promise< Boolean | null> => {
+        const isFollowingPromise = getFollowing(followerAlias);
+        const isFollowingResult: any = await isFollowingPromise;
+        let x  = isFollowingResult.filter( x =>  x.followeeAlias == followeeAlias); 
+        return  x.length > 0
     }
 
 }

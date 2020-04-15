@@ -21,7 +21,7 @@ const getFeed: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const feedService = new FeedService();
-    const feed = await feedService.buildFeed(alias);
+    const feed = await feedService.buildFeed(alias, "");
 
     return {
         statusCode: 200,

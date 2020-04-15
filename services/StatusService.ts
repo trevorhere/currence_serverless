@@ -1,7 +1,7 @@
 // const { createStatus, getStatuses } = require('../data/Status');
 const { getUser } = require('../data/User');
 
-const { addStatusToStory, getStory } = require('../data/Story');
+const { addStatusToStory, getStoryWithLimit } = require('../data/Story');
 
 const { updateFeed } = require('./SQS');
 const uuid = require('uuid');
@@ -16,15 +16,18 @@ export default class StatusService {
         const addStatusPromise = addStatusToStory(status)
         const addedStatus = await addStatusPromise;
 
-        updateFeed( status, alias )
+        updateFeed( status )
 
         console.log('addedStatus');
         return addedStatus;
     }
 
-    buildStory = async(alias: string): Promise < any[] | null> => {
-        const getStoryPromise = getStory(alias);
-        const story = await getStoryPromise;
+    buildStory = async(alias: string, key: string): Promise < any | null> => {
+        const getStoryPromise = getStoryWithLimit(alias, key );
+        const res = await getStoryPromise;
+        let story = res.data;
+        let newKey = res.key;
+        let user = await getUser(alias);
 
         let compare = (a,b) => {
             let dateA = a.createdAt;
@@ -32,6 +35,10 @@ export default class StatusService {
             return dateA >= dateB ? -1 : 1
         }
         
-        return story.sort(compare)
+        return {
+            story: story.sort(compare),
+            key: newKey,
+            user
+            }
     }
 }

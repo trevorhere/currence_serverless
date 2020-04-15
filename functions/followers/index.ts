@@ -5,22 +5,26 @@ import UserService from '../../services/UserService';
 const middy = require('middy');
 const { auth } = require('../auth/auth');
 
-
 const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
     //console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
     const data = event.queryStringParameters;
     const alias = data["alias"];
+    const keyString = data["key"]
+    let key = null;
+    if(keyString){
+      key = JSON.parse(keyString)
+    }
 
     if(!alias){ 
         throw new Error("[400] Bad input data")
     }
 
     const userService = new UserService();
-    const getFollowersPromise = userService.getFollowers(alias);
-    const followers = await getFollowersPromise;
-
+    const getFollowersPromise = userService.getFollowers(alias, key);
+    const res =  await getFollowersPromise;
+    // console.log('res: ', res);
 
     return {
         statusCode: 200,
@@ -29,7 +33,8 @@ const getFollowers: APIGatewayProxyHandler = async (event, _context) => {
             'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify({
-            followers: [...followers]
+            followers: res.followers,
+            key: res.key
         }),
     };
 

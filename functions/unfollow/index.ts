@@ -21,7 +21,7 @@ const unfollow: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const userService = new UserService();
-    let user  = await userService.unfollow(alias, followeeAlias)
+    let user  = await userService.unfollow(followeeAlias, alias)
 
 
     return {

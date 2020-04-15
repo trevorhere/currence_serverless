@@ -17,6 +17,7 @@ export const isFollowing: APIGatewayProxyHandler = async (event, _context) => {
 
     const utilService = new UtilService();
     let result = await utilService.isFollowing(alias, followeeAlias);
+    console.log('result: ', result)
 
     return {
         statusCode: 200,
