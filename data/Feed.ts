@@ -2,7 +2,7 @@ const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 import { Status } from '../models'
-const TableName =  process.env.CURRENCE_FEEDS_TABLE || "CURRENCE_FEEDS_TABLE"
+const TableName =  process.env.CURRENCE_FEEDS_TABLE || "CURRENCE_FEEDS"
 
 const getFeed = async (alias: string ): Promise<string[]>  => {
 

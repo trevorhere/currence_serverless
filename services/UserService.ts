@@ -1,6 +1,5 @@
-const { getUser, createUser, updateUserFollowing, updateUserFollowers } = require('../data/User');
-const { imageUploader } = require('./S3')
-const { addFollow, getFollowers, getFollowing, getFollowingWithLimit, removeFollow } = require('../data/Follow');
+const { getUser, createUser } = require('../data/User');
+const { addFollow, getFollowers, getFollowingWithLimit, removeFollow } = require('../data/Follow');
 
 import { User } from '../models';
 

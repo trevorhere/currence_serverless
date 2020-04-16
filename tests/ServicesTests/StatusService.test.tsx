@@ -1,4 +1,6 @@
 import StatusService from '../../services/StatusService';
+import FeedService from '../../services/FeedService';
+
 
 it("Creates a status", async () => {
     const statusService = new StatusService();
@@ -10,15 +12,15 @@ it("Creates a status", async () => {
 it("builds a story", async () => {
     const statusService = new StatusService();
     statusService.buildStory = jest.fn(() => { return  Promise.resolve([{alias: "x", message:"status message"},{alias: "y", message:"another status message"},{alias: "z", message:"third status message"}])});
-    const story = await statusService.buildStory("x");
+    const story = await statusService.buildStory("x", "none");
     expect(story).toBeDefined
     expect(story.length).toEqual(3)
 })
 
 it("builds a feed", async () => {
-    const statusService = new StatusService();
-    statusService.buildFeed = jest.fn(() => { return  Promise.resolve([{alias: "x", message:"status message"},{alias: "y", message:"another status message"},{alias: "z", message:"third status message"}])});
-    const feed = await statusService.buildFeed("x", 9);
+    const feedService = new FeedService();
+    feedService.buildFeed = jest.fn(() => { return  Promise.resolve([{alias: "x", message:"status message"},{alias: "y", message:"another status message"},{alias: "z", message:"third status message"}])});
+    const feed = await feedService.buildFeed("x", "none");
     expect(feed).toBeDefined
     expect(feed.length).toEqual(3)
 })

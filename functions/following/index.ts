@@ -9,14 +9,18 @@ const { auth } = require('../auth/auth');
 const getFollowing: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    const data = event.queryStringParameters;
-    const alias = data["alias"];
-    const keyString = data["key"]
-    let key = null;
-    if(keyString){
-      key = JSON.parse(keyString)
-    }
-
+        const alias = event.pathParameters.alias || ""
+        const cursor = event.pathParameters.cursor || ""
+    
+        console.log('INPUT QUERY PARAMS:  ', alias, cursor);
+    
+        let key = null;
+    
+        if(cursor && cursor !== "none"){
+            key = {followerAlias: alias, followeeAlias: cursor}
+        }
+    
+        console.log("key: ", key)
 
     if(!alias){ 
         throw new Error("[400] Bad input data")

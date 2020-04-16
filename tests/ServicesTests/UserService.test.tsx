@@ -33,7 +33,7 @@ it("Gets followers of a user", async () => {
         return ["y","z"] 
     });
 
-    const result = await userService.getFollowers("x")
+    const result = await userService.getFollowers("x", "none")
 
     expect(result.length).toEqual(2)
 })

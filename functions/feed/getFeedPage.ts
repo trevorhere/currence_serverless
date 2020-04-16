@@ -10,20 +10,19 @@ const getFeedPage: APIGatewayProxyHandler = async (event, _context) => {
     try { 
       
       
-      // console.log('event: ', event);
-      // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
-      const data = event.queryStringParameters;
-      const alias = data["alias"];
-      const keyString = data["key"]
+      const alias = event.pathParameters.alias || ""
+      const cursor = event.pathParameters.cursor || ""
+
+      console.log('INPUT QUERY PARAMS:  ', alias, cursor);
+
       let key = null;
-      if(keyString){
-        key = JSON.parse(keyString)
-      } 
 
-      console.log('data: ',data)
-      console.log('type key: ', keyString)
-      console.log('type key: ', key)
-
+      if(cursor && cursor !== "none"){
+        key = {id: cursor, ownerAlias: alias}
+      }
+  
+      console.log("key: ", key)
+  
     if(!alias){ 
         throw new Error("[400] Bad input data")
     }

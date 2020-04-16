@@ -115,8 +115,6 @@ provider:
       Resource: "arn:aws:sqs:${self:provider.region}:454900433813:${self:provider.environment.FETCH_FOLLOWERS_QUEUE}"
 
 functions:
-  test:
-    handler: ./functions/util/test.test
   signin:
     handler: ./functions/auth/signin.signin
     description: Signs a user into the app
@@ -164,9 +162,13 @@ functions:
       - http:
           method: get
           cors: true # <-- CORS!
-          path: feed_page
+          path: feed_page/{alias}/{token}/{cursor}
           request:
-            passThrough: WHEN_NO_TEMPLATES
+            parameters:
+              paths:
+                alias: true
+                token: true
+                cursor: true 
   getStory:
     handler: ./functions/story/index.getStory
     description: Gets story of a user
@@ -174,9 +176,12 @@ functions:
       - http:
           method: get
           cors: true # <-- CORS!
-          path: story
+          path: story/{alias}/{cursor}
           request:
-            passThrough: WHEN_NO_TEMPLATES
+            parameters:
+              paths:
+                alias: true
+                cursor: true 
   getFollowers:
     handler: ./functions/followers/index.getFollowers
     description: Gets a users followers
@@ -184,9 +189,13 @@ functions:
       - http:
           method: get
           cors: true # <-- CORS!
-          path: followers
+          path: followers/{alias}/{token}/{cursor}
           request:
-            passThrough: WHEN_NO_TEMPLATES
+            parameters:
+              paths:
+                alias: true
+                token: true
+                cursor: true 
   getFollowing:
     handler: ./functions/following/index.getFollowing
     description: Gets following of a user
@@ -194,9 +203,13 @@ functions:
       - http:
           method: get
           cors: true # <-- CORS!
-          path: following
+          path: following/{alias}/{token}/{cursor}
           request:
-            passThrough: WHEN_NO_TEMPLATES
+            parameters:
+              paths:
+                alias: true
+                token: true
+                cursor: true 
   follow:
     handler: ./functions/follow/index.follow
     description: Follow a user.

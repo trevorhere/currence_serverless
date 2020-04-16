@@ -7,7 +7,12 @@ const auth = () => {
 
   return {
     before: async handler => {
-      const token = handler.event.queryStringParameters.token;
+      console.log('fix auth event: ')
+      let token = handler.event?.queryStringParameters?.token;
+      if(!token){
+        token = handler.event.pathParameters.token
+      }
+      console.log('token: ', token)
       jwt.verify(token, secret, (error, decoded) => {
         if (error) {
           console.log("error x", error);

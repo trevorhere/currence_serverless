@@ -5,38 +5,18 @@ import StatusService from '../../services/StatusService';
 const getStory: APIGatewayProxyHandler = async (event, _context) => {
     try {  
 
-    // console.log('INPUT QUERY PARAMS:  ', event.queryStringParameters);
-    const data = event.queryStringParameters;
-    const alias = data["alias"];
-    const keyJSON = data["key"];
+    // console.log('INPUT QUERY PARAMS:  ', event);
+    const alias = event.pathParameters.alias || ""
+    const cursor = event.pathParameters.cursor || ""
+    console.log('INPUT QUERY PARAMS:  ', alias, cursor);
+    
     let key = null;
 
-    console.log("keyJson: ",keyJSON)
-    console.log("keyJson type : ",typeof(keyJSON))
-
-    if(keyJSON == "undefined"){
-
-    return {
-      statusCode: 200,
-      headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
-      },
-      body: JSON.stringify({
-          story: [],
-          user: null,
-          key: undefined
-        }),
-  };
-
+    if(cursor && cursor !== "none"){
+      key = {id: cursor, alias}
     }
 
-  if(keyJSON !== "undefined" && keyJSON){
-
-      key = JSON.parse(keyJSON);
-    }
-
-    console.log('key: ', key)
+    console.log("key: ", key)
 
 
     if(!alias){ 

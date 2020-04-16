@@ -1,7 +1,6 @@
 import { Status } from '../models'
-import { addStatusToFeed, addBulkStatusToFeed } from '../data/Feed'
-import { stat } from 'fs';
-const { getFollowers, getFollowersWithLimit } = require('../data/Follow');
+import { addBulkStatusToFeed } from '../data/Feed'
+const {  getFollowersWithLimit } = require('../data/Follow');
 
 var AWS = require('aws-sdk');
 const SQS_URL_UPDATE_FEED = process.env.SQS_URL_UPDATE_FEED || "https://sqs.us-east-1.amazonaws.com/454900433813/FeedUpdateQueue"
@@ -47,13 +46,7 @@ const updateFeed = async (status: Status) => {
 }
 
 const receiveFollowers = async (event, _context) => {
-
   try {
-    // console.log('recieve followers');
-    // console.log('EVENT:  ', event.Records[0].messageAttributes);
-    // console.log('alias:  ', event.Records[0].messageAttributes.StatusAlias.stringValue);
-    // console.log('message:  ', event.Records[0].messageAttributes.StatusMessage.stringValue);
-    // console.log('image:  ', event.Records[0].messageAttributes.StatusImage.stringValue);
     // console.log('id:  ', event.Records[0].messageAttributes.StatusID.stringValue);
 
     let statusAlias = event.Records[0].messageAttributes.StatusAlias.stringValue;
@@ -127,8 +120,6 @@ const sendStatus = async (status, feedOwnerAliases) => {
         }
       },
       MessageBody: `Sending Status ${status.id} to lambda`,
-      // MessageDeduplicationId: "TheWhistler",  // Required for FIFO queues
-      // MessageId: "Group1",  // Required for FIFO queues
       QueueUrl: SQS_URL_UPDATE_FEED
     };
 
@@ -136,7 +127,7 @@ const sendStatus = async (status, feedOwnerAliases) => {
     console.log('UPDATE_FEED_RESULT: ', res);
       
   } catch (error){
-    console.log("ERRPR::SQS.sendStatus: ", error.message)
+    console.log("ERROR::SQS.sendStatus: ", error.message)
   }
 }
 
