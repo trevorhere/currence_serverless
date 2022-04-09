@@ -13,7 +13,7 @@
     "file-type": "^14.1.4",
     "jsonwebtoken": "^8.5.1",
     "middy": "^0.34.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "read-chunk": "^3.2.0",
     "sha1": "^1.1.1",
     "source-map-support": "^0.5.10",
