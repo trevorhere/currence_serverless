@@ -11,7 +11,7 @@
     "bcryptjs": "^2.4.3",
     "file-base64": "^1.0.0",
     "file-type": "^14.1.4",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "middy": "^0.34.0",
     "moment": "^2.24.0",
     "read-chunk": "^3.2.0",
